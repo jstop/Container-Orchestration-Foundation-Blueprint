@@ -3,11 +3,13 @@ apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
 
 metadata:
-  name: eksworkshop-eksctl
+  name: container-orchestration-blueprint 
   region: us-east-2
   version: "1.21"
   tags:
-    karpenter.sh/discovery: eksworkshop-eksctl 
+    karpenter.sh/discovery: container-orchestration-blueprint 
+
+#To use IAM roles for service accounts in your cluster, you must create an IAM OIDC Identity Provider.
 iam:
   withOIDC: true
 
@@ -50,5 +52,5 @@ managedNodeGroups:
 #  clusterLogging:
 #    enableTypes: ["*"]
 
-secretsEncryption:
-  keyARN: 'arn:aws:kms:us-east-2:899456967600:key/a9710be0-df5f-42a3-b4fa-848d4ec71527'
+#secretsEncryption:
+#  keyARN: 'arn:aws:kms:us-east-2:899456967600:key/a9710be0-df5f-42a3-b4fa-848d4ec71527'
