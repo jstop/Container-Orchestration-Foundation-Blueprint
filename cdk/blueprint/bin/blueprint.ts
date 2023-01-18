@@ -63,5 +63,5 @@ const stack = blueprints.EksBlueprint.builder()
     .addOns(...addOns)
     .clusterProvider(clusterProvider)
     .teams(...teams)
-    .build(app, 'eks-blueprint');
+    .build(app, 'blueprint');
 
