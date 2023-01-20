@@ -4,6 +4,7 @@ import * as blueprints from '@aws-quickstart/eks-blueprints';
 import { ArnPrincipal } from "aws-cdk-lib/aws-iam";
 import { PlatformTeam } from '@aws-quickstart/eks-blueprints';
 import * as eks from 'aws-cdk-lib/aws-eks';
+import * as iam from 'aws-cdk-lib/aws-iam';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as team from '../lib/teams'
 
@@ -19,10 +20,38 @@ const teams: Array<blueprints.Team> = [
         ];
 
 
+const cloudWatchLogPolicy = new iam.PolicyStatement({
+    actions: [
+        'logs:CreateLogGroup',
+        'logs:CreateLogStream',
+        'logs:PutLogEvents',
+    ],
+    resources: ["*"],
+})
+
 const addOns: Array<blueprints.ClusterAddOn> = [
     new blueprints.addons.ArgoCDAddOn(),
     //new blueprints.addons.CalicoAddOn,
     new blueprints.addons.MetricsServerAddOn,
+    new blueprints.addons.AwsForFluentBitAddOn({ 
+        version: '0.1.22',
+        iamPolicies: [cloudWatchLogPolicy],
+        values: {
+            cloudWatch: {
+                enabled: true,
+                region: region,
+            },
+            firehose: {
+                enabled: false,
+            },
+            kinesis: {
+                enabled: false,
+            },
+            elasticSearch: {
+                enabled: false,
+            }
+        }
+    }),
     //new blueprints.addons.ClusterAutoScalerAddOn,
     //new blueprints.addons.ContainerInsightsAddOn,
     new blueprints.addons.AwsLoadBalancerControllerAddOn(),
