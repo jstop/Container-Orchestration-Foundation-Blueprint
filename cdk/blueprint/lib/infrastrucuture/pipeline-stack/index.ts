@@ -5,6 +5,7 @@ import * as codepipeline_actions from 'aws-cdk-lib/aws-codepipeline-actions';
 import * as codebuild from 'aws-cdk-lib/aws-codebuild';
 import { Repository } from 'aws-cdk-lib/aws-codecommit';
 import * as ecr from 'aws-cdk-lib/aws-ecr';
+import * as iam from 'aws-cdk-lib/aws-iam';
 import { IDatabaseCluster } from 'aws-cdk-lib/aws-rds';
 
 
@@ -46,6 +47,9 @@ export class PipelineStack extends cdk.Stack {
                 'RDS_SECRET_NAME': { value: rdsSecretName },
             }
         });
+        const arm_build_role = arm_build.role as iam.Role;
+        arm_build_role.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonEC2ContainerRegistryFullAccess'));
+        arm_build_role.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMReadOnlyAccess'));
 
         const amd_build = new codebuild.PipelineProject(this, 'amd_build', {
             buildSpec: codebuild.BuildSpec.fromSourceFilename('buildspec/amd_build.yml'),
@@ -59,6 +63,11 @@ export class PipelineStack extends cdk.Stack {
                 }
             }
         });
+        //add managed policy to codebuild role
+        const amd_build_role = amd_build.role as iam.Role;
+        amd_build_role.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonEC2ContainerRegistryFullAccess'));
+        amd_build_role.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMReadOnlyAccess'));
+
         const post_build = new codebuild.PipelineProject(this, 'post_build', {
             buildSpec: codebuild.BuildSpec.fromSourceFilename('buildspec/post_build.yml'),
             environment: {
@@ -71,7 +80,14 @@ export class PipelineStack extends cdk.Stack {
                 }
             }
         });
-
+        const post_build_role = arm_build.role as iam.Role;
+        post_build_role.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonEC2ContainerRegistryFullAccess'));
+        post_build_role.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMReadOnlyAccess'));
+        post_build_role.addToPolicy(new iam.PolicyStatement({
+            actions: ['eks:DescribeCluster', 'eks:DescribeNodegroup','eks:DescribeUpdate'],
+            resources: ['*']
+        }));
+        
         // create pipeline
         const source_artifact = new codepipeline.Artifact();
         const arm_build_artifact = new codepipeline.Artifact("ArmBuildOutput");
@@ -87,6 +103,7 @@ export class PipelineStack extends cdk.Stack {
                         new codepipeline_actions.CodeCommitSourceAction({
                             actionName: 'CodeCommit',
                             repository: codeCommitRepo,
+                            branch: 'main',
                             output: source_artifact,
                         }),
                     ],

@@ -15,3 +15,6 @@ browse to argocd UI
 localhost:8080
 username: admin
 password: `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d`
+
+### Setup Sample App
+With proxy enable run `./cdk/scripts/springapp.sh`
