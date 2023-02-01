@@ -11,6 +11,7 @@ interface SecurityStackProps extends cdk.StackProps {
 
 export class SecurityStack extends cdk.Stack {
   public readonly redisSecurityGroup: ISecurityGroup;
+  public readonly rdsSecurityGroup: ISecurityGroup;
   //public readonly bastionSecurityGroup: ISecurityGroup;
 
   constructor(scope: Construct, id: string, props: SecurityStackProps) {
@@ -27,10 +28,20 @@ export class SecurityStack extends cdk.Stack {
       securityGroupName: 'RedisSecurityGroup'
     });
 
+    // Create security group for rds mysql
+    const rdsSecurityGroup = new ec2.SecurityGroup(this, 'RDSSecurityGroup', {
+        vpc: vpc,
+        allowAllOutbound: true,
+        description: 'Security group for RDS MySQL',
+        securityGroupName: 'RDSSecurityGroup'
+    });
+
     // Allow access from cluster host
     redisSecurityGroup.addIngressRule(clusterSecurityGroup, ec2.Port.tcp(6379), 'Access from cluster Security Group');
+    rdsSecurityGroup.addIngressRule(clusterSecurityGroup, ec2.Port.tcp(3306), 'Access from cluster Security Group');
 
     // Assign the redisSecurityGroup to class property
     this.redisSecurityGroup = redisSecurityGroup;
+    this.rdsSecurityGroup = rdsSecurityGroup;
   }
 }

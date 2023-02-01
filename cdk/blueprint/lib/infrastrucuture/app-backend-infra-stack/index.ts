@@ -10,6 +10,7 @@ import { ISecurityGroup, IVpc } from 'aws-cdk-lib/aws-ec2';
 interface AppBackendInfrastructureStackProps extends cdk.StackProps {
   vpc: IVpc;
   redisSecurityGroup: ISecurityGroup;
+  rdsSecurityGroup: ISecurityGroup;
 }
 
 export class AppBackendInfrastructureStack extends cdk.Stack {
@@ -22,7 +23,7 @@ export class AppBackendInfrastructureStack extends cdk.Stack {
     super(scope, id, props);
    
     // Get the vpc and redisSecurityGroup from vpc and security stack
-    const { vpc, redisSecurityGroup } = props;
+    const { vpc, redisSecurityGroup, rdsSecurityGroup } = props;
 
     // Get projectName and env from context variables
     const projectName = this.node.tryGetContext('project-name');
@@ -53,17 +54,24 @@ export class AppBackendInfrastructureStack extends cdk.Stack {
     // Define this redis cluster is depends on redis subnet group created first
     redisCluster.addDependsOn(redisSubnetGroup);
 
+      // Create an RDS Cluster with Aurora Serverless and initial database name polling
     const rdsCluster = new rds.DatabaseCluster(this, 'Database', {
         engine: rds.DatabaseClusterEngine.auroraMysql({ version: rds.AuroraMysqlEngineVersion.VER_2_10_0 }),
         credentials: rds.Credentials.fromGeneratedSecret('clusteradmin'), // Optional - will default to 'admin' username and generated password
+        defaultDatabaseName: 'polling',
         instanceProps: {
           instanceType: ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE2, ec2.InstanceSize.SMALL),
           vpcSubnets: {
             subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
           },
           vpc,
+          securityGroups: [rdsSecurityGroup],
         },
       });
+
+    //Allow trafic to rds cluster from  security group
+      // rdsCluster.connections.allowDefaultPortFrom(redisSecurityGroup);
+    // rdsCluster.connections.allowDefaultPortFrom(vpc);
     //export redis hostname and port
       //export rds secret
     this.redisHostname = redisCluster.attrRedisEndpointAddress;

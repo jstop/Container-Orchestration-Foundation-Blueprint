@@ -14,22 +14,23 @@ interface PipelineStackProps extends cdk.StackProps {
     redisPort: string;
     rdsCluster: IDatabaseCluster;
     rdsSecretName: string;
+    pipelineName: string;
 }
 
 export class PipelineStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props: PipelineStackProps) {
         super(scope, id, props);
 
-        const { redisHostname, redisPort, rdsCluster, rdsSecretName  } = props;
+        const { redisHostname, redisPort, rdsCluster, rdsSecretName, pipelineName  } = props;
 
         //  create ECR Repo
         const ecrRepo = new ecr.Repository(this, 'EcrRepo',{
-            repositoryName: 'springboot-multiarch'
+            repositoryName: pipelineName
         });
 
         //  create CodeCommit
         const codeCommitRepo = new Repository(this, "CodeCommitRepository",{
-            repositoryName: 'springboot-multiarch'
+            repositoryName: pipelineName
         });
 
         // create code builds
@@ -40,11 +41,13 @@ export class PipelineStack extends cdk.Stack {
                 privileged: true,
             },
             environmentVariables: {  
+                'DOCKERHUB_USERNAME': { value: 'vrlabs' },
                 'REPOSITORY_URI': { value: ecrRepo.repositoryUri },
                 'REDIS_HOSTNAME': { value: redisHostname },
                 'REDIS_PORT': { value: redisPort },
                 'RDS_ENDPOINT': { value: rdsCluster.clusterEndpoint.hostname },
                 'RDS_SECRET_NAME': { value: rdsSecretName },
+                'REACT_APP_API_BASE_URL': { value: 'https://polling-api.verticalrelevancelabs.com/api' },
             }
         });
         const arm_build_role = arm_build.role as iam.Role;
@@ -58,9 +61,9 @@ export class PipelineStack extends cdk.Stack {
                 privileged: true,
             },
             environmentVariables: {  
-                'REPOSITORY_URI': {
-                    value: ecrRepo.repositoryUri
-                }
+                'DOCKERHUB_USERNAME': { value: 'vrlabs' },
+                'REPOSITORY_URI': { value: ecrRepo.repositoryUri },
+                'REACT_APP_API_BASE_URL': { value: 'https://polling-api.verticalrelevancelabs.com' },
             }
         });
         //add managed policy to codebuild role
@@ -75,9 +78,9 @@ export class PipelineStack extends cdk.Stack {
                 privileged: true,
             },
             environmentVariables: {  
-                'REPOSITORY_URI': {
-                    value: ecrRepo.repositoryUri
-                }
+                'REPOSITORY_URI': { value: ecrRepo.repositoryUri },
+                'RDS_ENDPOINT': { value: rdsCluster.clusterEndpoint.hostname },
+                'RDS_SECRET_NAME': { value: rdsSecretName },
             }
         });
         const post_build_role = arm_build.role as iam.Role;

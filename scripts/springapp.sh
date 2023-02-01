@@ -1,11 +1,17 @@
+./scripts/service_account.sh
 export ARGO_SVC=$(kubectl get svc -n argocd -l app.kubernetes.io/name=argocd-server -o name)
 export ARGO_PWD=`kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d`
 argocd login localhost:8080 --username admin --password $ARGO_PWD --insecure
 
 #After installing argo you can use it to install the polling app
-kubectl create namespace polling-app
-argocd app create polling-app --repo https://github.com/jstein-vr/spring-security-react-ant-design-polls-app.git  --dest-server https://kubernetes.default.svc --dest-namespace polling-app --path ./deployments
+kubectl create namespace public
+kubectl create namespace api
+argocd app create polling-app --repo https://github.com/jstein-vr/spring-security-react-ant-design-polls-app.git --revision refactor --dest-server https://kubernetes.default.svc --dest-namespace polling-app --path ./deployments
 argocd app sync polling-app
+
+
+eksctl create iamserviceaccount --cluster=blueprint --name=polling-app-server --namespace=api --attach-policy-arn=arn:aws:iam::aws:policy/SecretsManagerReadWrite --approve
+
 
 echo "login to the dashboard with the following commands"
 echo "kubectl proxy"

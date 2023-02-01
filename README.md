@@ -1,5 +1,4 @@
 # Container-Orchestration-Foundation-Blueprint
-Container Orchestration Foundation Blueprint
 
 ## Install and run CDK
 cdk bootstrap
@@ -10,6 +9,7 @@ cdk deploy
 ### Setup Argo Proxy
 kubectl port-forward service/blueprints-addon-argocd-server -n argocd 8080:443
 Install k8-dashboard via argo dashboard script
+./scripts/k8-dashboard.sh
 
 browse to argocd UI
 localhost:8080
@@ -18,3 +18,6 @@ password: `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath=
 
 ### Setup Sample App
 With proxy enable run `./cdk/scripts/springapp.sh`
+
+### Other Manual Steps
+Open the rds SG api node server SG
