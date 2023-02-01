@@ -1,0 +1,79 @@
+---
+apiVersion: apps/v1           # API version
+kind: Deployment              # Type of kubernetes resource
+metadata:
+  name: polling-app-server    # Name of the kubernetes resource
+  namespace: api
+  labels:                     # Labels that will be applied to this resource
+    app: polling-app-server
+spec:
+  replicas: 1                 # No. of replicas/pods to run in this deployment
+  selector:
+    matchLabels:              # The deployment applies to any pods mayching the specified labels
+      app: polling-app-server
+  template:                   # Template for creating the pods in this deployment
+    metadata:
+      labels:                 # Labels that will be applied to each Pod in this deployment
+        app: polling-app-server
+    spec:                     # Spec for the containers that will be run in the Pods
+      serviceAccountName: polling-app-server
+      containers:
+      - name: polling-app-server
+        image: 899456967600.dkr.ecr.us-east-2.amazonaws.com/spring-backend:ff7382eamd64
+        #image: callicoder/polling-app-server:1.0.0
+        imagePullPolicy: IfNotPresent
+        ports:
+          - name: http
+            containerPort: 8080 # The port that the container exposes
+        resources:
+          #limits:
+          #  cpu: 0.2
+          #  memory: "200Mi"
+        env:                  # Environment variables supplied to the Pod
+        - name: SPRING_DATASOURCE_URL # Name of the environment variable
+          value: jdbc-secretsmanager:mysql://redisstack-databaseb269d8bb-9xsng08ehlpf.cluster-cetdtvws2z9p.us-east-2.rds.amazonaws.com:3306/polling?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+        - name: SPRING_DATASOURCE_USERNAME # Name of the environment variable
+          value: RedisStackDatabaseSecretD6D-HLBDPI135oUH
+        - name: SPRING_DATASOURCE_DRIVER-CLASS-NAME
+          value: com.amazonaws.secretsmanager.sql.AWSSecretsManagerMySQLDriver
+            #- name: SPRING_DATASOURCE_URL
+            #  value: redisstack-databaseb269d8bb-rilbreguidlv.cluster-cetdtvws2z9p.us-east-2.rds.amazonaws.com
+---
+apiVersion: v1                # API version
+kind: Service                 # Type of the kubernetes resource
+metadata:                     
+  name: polling-app-server    # Name of the kubernetes resource
+  namespace: api
+  labels:                     # Labels that will be applied to this resource
+    app: polling-app-server
+spec:                         
+  type: NodePort              # The service will be exposed by opening a Port on each node and proxying it. 
+  selector:
+    app: polling-app-server   # The service exposes Pods with label `app=polling-app-server`
+  ports:                      # Forward incoming connections on port 8080 to the target port 8080
+  - name: http
+    port: 8080
+    targetPort: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: polling-app-server
+  namespace: api
+  annotations:
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-2:899456967600:certificate/e0e84eda-6739-4ab4-a65d-db7247a64d4d
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+spec:
+  ingressClassName: alb
+  rules:
+    - host: polling-api.verticalrelevancelabs.com
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: polling-app-server
+              port:
+                number: 8080
