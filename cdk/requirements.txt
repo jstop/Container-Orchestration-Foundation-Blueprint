@@ -1,3 +1,0 @@
-aws-cdk.core
-aws-cdk.assertions
-aws_cdk.aws_dynamodb

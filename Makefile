@@ -1,37 +1,26 @@
 #!/bin/bash
-
-# Libraries
-TSC := node node_modules/.bin/tsc --skipLibCheck
-ESLINT := node node_modules/.bin/eslint
-CDK := node node_modules/.bin/cdk
-CDK_PATH := ./cdk/blueprint
+CDK_PATH  := $(PWD)/cdk/blueprint
+CDK_PATH  := $(PWD)/app
 
 # Dependecies
-HOMEBREW_LIBS :=  nvm typescript argocd
+HOMEBREW_LIBS :=  nvm typescript argocd git-remote-codecommit
 
-all:
-	$(MAKE) -C ./cdk
-
-npm_install:
-	npm install $(CDK_PATH)
-
-deps: bootstrap
-	npm install $(CDK_PATH)
-
-lint: 
-	$(ESLINT) . --ext .js,.jsx,.ts,.tsx
-
+all: bootstrap build
+	
 build:
-	rm -rf dist && $(TSC)
+	cd $(CDK_PATH) && npm install
+	cd $(CDK_PATH) && cdk deploy --all 
+	aws eks update-kubeconfig --name blueprint --region us-east-2 
+	./scripts/k8_dashboard.sh
+	./scripts/service_account.sh
+	cd $(APP_PATH)/spring-frontend && git init && git remote add origin codecommit::us-east-2://spring-frontend && git push -u origin/main main
+	cd $(APP_PATH)/spring-backend && git init && git remote add origin codecommit::us-east-2://spring-backend && git push -u origin/main main
 
-list: 
-	$(CDK) list
+argo-proxy:
+	kubectl port-forward service/blueprints-addon-argocd-server -n argocd 8080:443
 
-mkdocs:
-	mkdocs serve 
-
-synth: 
-	$(CDK) synth	
+destroy:
+	cd $(CDK_PATH) && cdk destroy --all 
 
 bootstrap:
 	@for LIB in $(HOMEBREW_LIBS) ; do \
