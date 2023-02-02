@@ -31,13 +31,26 @@ const cloudWatchLogPolicy = new iam.PolicyStatement({
     resources: ["*"],
 })
 
+const domainName = "verticalrelevancelabs.com";
+
 const addOns: Array<blueprints.ClusterAddOn> = [
     new blueprints.addons.ArgoCDAddOn(),
     new blueprints.addons.MetricsServerAddOn,
     //new blueprints.addons.ClusterAutoScalerAddOn,
     new blueprints.addons.AwsLoadBalancerControllerAddOn(),
+    new blueprints.addons.ExternalDnsAddOn({
+        hostedZoneResources: ["HostedZone"]
+    }),
     new blueprints.addons.VpcCniAddOn(),
-    new blueprints.addons.KarpenterAddOn(),
+    new blueprints.addons.KarpenterAddOn( {
+        subnetTags: {
+            "Name": "blueprint/blueprint-vpc/PrivateSubnet1",
+        },
+        securityGroupTags: {
+            "kubernetes.io/cluster/blueprint": "owned",
+        }
+    }
+    ),
     new blueprints.addons.CertManagerAddOn(),
     new blueprints.addons.AwsForFluentBitAddOn({ 
         version: '0.1.22',
@@ -60,34 +73,11 @@ const addOns: Array<blueprints.ClusterAddOn> = [
     }),
 ];
 
-const clusterProvider = new blueprints.GenericClusterProvider({
-    version: eks.KubernetesVersion.V1_23,
-    managedNodeGroups: [{
-      id: 'manage',
-      instanceTypes: [new ec2.InstanceType('t3.small')],
-      minSize: 2,
-      maxSize: 4,
-      desiredSize: 2        
-    },
-    {
-      id: 'web-server',
-      instanceTypes: [new ec2.InstanceType('t3.small')],
-      minSize: 3,
-      maxSize: 6,
-      desiredSize: 3        
-    },
-    {
-      id: 'api-server',
-      instanceTypes: [new ec2.InstanceType('t3.small')],
-      desiredSize: 3        
-    }],
-  })
-
 const stack = blueprints.EksBlueprint.builder()
     .account(account)
     .region(region)
+    .resourceProvider("HostedZone", new blueprints.LookupHostedZoneProvider(domainName))
     .addOns(...addOns)
-    .clusterProvider(clusterProvider)
     .teams(...teams)
     .build(app, 'blueprint');
 

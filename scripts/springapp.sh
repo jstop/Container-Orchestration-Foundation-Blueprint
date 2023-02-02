@@ -6,7 +6,8 @@ argocd login localhost:8080 --username admin --password $ARGO_PWD --insecure
 #After installing argo you can use it to install the polling app
 kubectl create namespace public
 kubectl create namespace api
-argocd app create polling-app --repo https://github.com/jstein-vr/spring-security-react-ant-design-polls-app.git --revision refactor --dest-server https://kubernetes.default.svc --dest-namespace polling-app --path ./deployments
+argocd repo add git@github.com:VerticalRelevance/Container-Orchestration-Foundation-Blueprint.git --ssh-private-key-path ~/.ssh/id_ed25519
+argocd app create polling-app --repo https://github.com/VerticalRelevance/Container-Orchestration-Foundation-Blueprint.git --revision dev --dest-server https://kubernetes.default.svc --dest-namespace polling-app --path ./app/infra
 argocd app sync polling-app
 
 
