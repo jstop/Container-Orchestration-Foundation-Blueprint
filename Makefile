@@ -1,6 +1,6 @@
 #!/bin/bash
-CDK_PATH  := $(PWD)/cdk
-APP_PATH  := $(PWD)/cdk/blueprint
+CDK_PATH  := $(PWD)/blueprint
+APP_PATH  := $(PWD)/apps
 ARGO_PWD  :=`kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d`
 
 # Dependecies
@@ -20,9 +20,10 @@ argo-proxy:
 	kubectl port-forward service/blueprints-addon-argocd-server -n argocd 8080:443
 	
 deploy:
-	cd $(APP_PATH) && cdk deploy --all 
+	cd $(CDK_PATH) && cdk deploy --all 
 
 destroy:
+	eksctl delete iamserviceaccount --config-file=./tmp/service_account.yaml --approve 
 	cd $(CDK_PATH) && cdk destroy --all 
 
 dashboard:
@@ -34,7 +35,7 @@ bootstrap:
 	@for LIB in $(HOMEBREW_LIBS) ; do \
 		LIB=$$LIB make check-lib ; \
     done
-	cd $(APP_PATH) && npm install
+	cd $(CDK_PATH) && npm install
 
 check-lib:
 ifeq ($(shell brew ls --versions $(LIB)),)
