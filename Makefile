@@ -9,9 +9,9 @@ HOMEBREW_LIBS :=  nvm typescript argocd git-remote-codecommit
 all: bootstrap build
 	
 build:
-	cd $(APP_PATH) && npm install
 	make deploy
 	aws eks update-kubeconfig --name blueprint --region us-east-2 
+	./scripts/karpenter.sh
 	./scripts/k8_dashboard.sh
 	./scripts/service_account.sh
 	cd $(APP_PATH)/spring-frontend && git init && git remote add origin codecommit::us-east-2://spring-frontend && git push -u origin/main main
@@ -25,12 +25,14 @@ deploy:
 	cd $(APP_PATH) && cdk deploy --all 
 
 destroy:
-	cd $(CDK_PATH) && cdk destroy --all 
+	cd $(APP_PATH) && cdk destroy --all 
+
 
 bootstrap:
 	@for LIB in $(HOMEBREW_LIBS) ; do \
 		LIB=$$LIB make check-lib ; \
     done
+	cd $(APP_PATH) && npm install
 
 check-lib:
 ifeq ($(shell brew ls --versions $(LIB)),)
