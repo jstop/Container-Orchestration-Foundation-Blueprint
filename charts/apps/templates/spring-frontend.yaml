@@ -7,7 +7,7 @@ metadata:
   - resources-finalizer.argocd.argoproj.io
 spec:
   destination:
-    namespace: spring-frontend
+    namespace: public
     server: {{ .Values.spec.destination.server }}
   project: default
   source:
