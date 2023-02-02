@@ -29,7 +29,7 @@ ingress:
     external-dns.alpha.kubernetes.io/hostname: polling.verticalrelevancelabs.com 
 
   path: /
-  host: polling.verticalrelevancelabs.com
+  host: polling-api.verticalrelevancelabs.com
   hosts:
     - chart-example.local
   tls: []
