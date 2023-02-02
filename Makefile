@@ -12,8 +12,6 @@ build:
 	make deploy
 	aws eks update-kubeconfig --name blueprint --region us-east-2 
 	./scripts/karpenter.sh
-	./scripts/k8_dashboard.sh
-	./scripts/service_account.sh
 	cd $(APP_PATH)/spring-frontend && git init && git remote add origin codecommit::us-east-2://spring-frontend && git push -u origin/main main
 	cd $(APP_PATH)/spring-backend && git init && git remote add origin codecommit::us-east-2://spring-backend && git push -u origin/main main
 
@@ -25,8 +23,12 @@ deploy:
 	cd $(APP_PATH) && cdk deploy --all 
 
 destroy:
-	cd $(APP_PATH) && cdk destroy --all 
+	cd $(CDK_PATH) && cdk destroy --all 
 
+dashboard:
+	./scripts/k8_dashbard.sh
+apps:
+	./scripts/springapp.sh
 
 bootstrap:
 	@for LIB in $(HOMEBREW_LIBS) ; do \

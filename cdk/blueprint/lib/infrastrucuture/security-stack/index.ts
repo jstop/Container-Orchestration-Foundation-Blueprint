@@ -37,7 +37,6 @@ export class SecurityStack extends cdk.Stack {
     });
 
     // Allow access from cluster host
-    redisSecurityGroup.addIngressRule(clusterSecurityGroup, ec2.Port.tcp(6379), 'Access from cluster Security Group');
     rdsSecurityGroup.addIngressRule(clusterSecurityGroup, ec2.Port.tcp(3306), 'Access from cluster Security Group');
 
     // Assign the redisSecurityGroup to class property

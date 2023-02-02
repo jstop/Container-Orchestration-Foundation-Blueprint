@@ -10,8 +10,6 @@ import { IDatabaseCluster } from 'aws-cdk-lib/aws-rds';
 
 
 interface PipelineStackProps extends cdk.StackProps {
-    redisHostname: string;
-    redisPort: string;
     rdsCluster: IDatabaseCluster;
     rdsSecretName: string;
     pipelineName: string;
@@ -21,7 +19,7 @@ export class PipelineStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props: PipelineStackProps) {
         super(scope, id, props);
 
-        const { redisHostname, redisPort, rdsCluster, rdsSecretName, pipelineName  } = props;
+        const { rdsCluster, rdsSecretName, pipelineName  } = props;
 
         //  create ECR Repo
         const ecrRepo = new ecr.Repository(this, 'EcrRepo',{
@@ -43,8 +41,6 @@ export class PipelineStack extends cdk.Stack {
             environmentVariables: {  
                 'DOCKERHUB_USERNAME': { value: 'vrlabs' },
                 'REPOSITORY_URI': { value: ecrRepo.repositoryUri },
-                'REDIS_HOSTNAME': { value: redisHostname },
-                'REDIS_PORT': { value: redisPort },
                 'RDS_ENDPOINT': { value: rdsCluster.clusterEndpoint.hostname },
                 'RDS_SECRET_NAME': { value: rdsSecretName },
                 'REACT_APP_API_BASE_URL': { value: 'https://polling-api.verticalrelevancelabs.com/api' },

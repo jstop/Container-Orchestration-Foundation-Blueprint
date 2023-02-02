@@ -12,11 +12,11 @@ iam:
   withOIDC: true
   serviceAccounts:
   - metadata:
-      name: polling-app-server
+      name: spring-backend
       # if no namespace is set, "default" will be used;
       # the namespace will be created if it doesn't exist already
       namespace: api
-    roleName: polling-app-server
+    roleName: spring-backend
     attachPolicyARNs:
     - "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
 EOF

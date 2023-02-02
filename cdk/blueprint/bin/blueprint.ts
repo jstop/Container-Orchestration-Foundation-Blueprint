@@ -93,11 +93,9 @@ const securityStack = new infrastructure.SecurityStack(app, 'SecurityStack', {
 
 const backend = new infrastructure.AppBackendInfrastructureStack(app, 'RedisStack', { 
     vpc: vpc, 
-    redisSecurityGroup: securityStack.redisSecurityGroup, 
     rdsSecurityGroup: securityStack.rdsSecurityGroup, 
     env: { account: account, region: region } 
 });
 
-const pipeline = new infrastructure.PipelineStack(app, 'PipelineStack',  {redisHostname: backend.redisHostname, redisPort: backend.redisPort, rdsCluster: backend.rdsCluster, rdsSecretName: backend.rdsSecretName, pipelineName: 'springboot-multiarch', env: { account: account, region: region } });
-const springBackendPipeline = new infrastructure.PipelineStack(app, 'SpringBackendPipelineStack',  {redisHostname: backend.redisHostname, redisPort: backend.redisPort, rdsCluster: backend.rdsCluster, rdsSecretName: backend.rdsSecretName, pipelineName: 'spring-backend', env: { account: account, region: region } });
-const springFrontendPipeline = new infrastructure.PipelineStack(app, 'SpringFrontendPipelineStack',  {redisHostname: backend.redisHostname, redisPort: backend.redisPort, rdsCluster: backend.rdsCluster, rdsSecretName: backend.rdsSecretName, pipelineName: 'spring-frontend', env: { account: account, region: region } });
+const springBackendPipeline = new infrastructure.PipelineStack(app, 'SpringBackendPipelineStack',  { rdsCluster: backend.rdsCluster, rdsSecretName: backend.rdsSecretName, pipelineName: 'spring-backend', env: { account: account, region: region } });
+const springFrontendPipeline = new infrastructure.PipelineStack(app, 'SpringFrontendPipelineStack',  { rdsCluster: backend.rdsCluster, rdsSecretName: backend.rdsSecretName, pipelineName: 'spring-frontend', env: { account: account, region: region } });
