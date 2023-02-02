@@ -1,5 +1,6 @@
 # An example of ClusterConfig with IAMServiceAccounts:
-cat > service_account.yaml <<EOF
+mkdir tmp
+cat > tmp/service_account.yaml <<EOF
 ---
 apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
@@ -21,5 +22,5 @@ iam:
     - "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
 EOF
 
-eksctl utils associate-iam-oidc-provider --config-file=./service_account.yaml --approve
-eksctl create iamserviceaccount --config-file=./service_account.yaml --approve --override-existing-serviceaccounts
+eksctl utils associate-iam-oidc-provider --config-file=./tmp/service_account.yaml --approve
+eksctl create iamserviceaccount --config-file=./tmp/service_account.yaml --approve --override-existing-serviceaccounts
