@@ -1,10 +1,10 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ template "spring-frontend.fullname" . }}
+  name: {{ template "spring-backend.fullname" . }}
   labels:
-    app: {{ template "spring-frontend.name" . }}
-    chart: {{ template "spring-frontend.chart" . }}
+    app: {{ template "spring-backend.name" . }}
+    chart: {{ template "spring-backend.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
   annotations:
@@ -19,6 +19,6 @@ spec:
           pathType: Prefix
           backend:
             service:
-              name: {{ template "spring-frontend.fullname" . }}
+              name: {{ template "spring-backend.fullname" . }}
               port:
                 number: {{ .Values.service.port }}
