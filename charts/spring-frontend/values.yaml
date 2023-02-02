@@ -17,9 +17,12 @@ service:
 
 ingress:
   enabled: false
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
+  annotations: 
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-2:899456967600:certificate/e0e84eda-6739-4ab4-a65d-db7247a64d4d
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    external-dns.alpha.kubernetes.io/hostname: polling.verticalrelevancelabs.com 
+
   path: /
   hosts:
     - chart-example.local
