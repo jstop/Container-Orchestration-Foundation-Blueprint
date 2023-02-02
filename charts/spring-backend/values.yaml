@@ -9,9 +9,12 @@ image:
   tag: ff7382eamd64	
   pullPolicy: IfNotPresent
 env:
-  - SPRING_DATASOURCE_URL: jdbc-secretsmanager:mysql://redisstack-databaseb269d8bb-9xsng08ehlpf.cluster-cetdtvws2z9p.us-east-2.rds.amazonaws.com:3306/polling?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
-  - SPRING_DATASOURCE_USERNAME: RedisStackDatabaseSecretD6D-HLBDPI135oUH
-  - SPRING_DATASOURCE_DRIVER-CLASS-NAME: com.amazonaws.secretsmanager.sql.AWSSecretsManagerMySQLDriver
+  - name: SPRING_DATASOURCE_URL 
+    value: jdbc-secretsmanager:mysql://redisstack-databaseb269d8bb-9xsng08ehlpf.cluster-cetdtvws2z9p.us-east-2.rds.amazonaws.com:3306/polling?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+  - name: SPRING_DATASOURCE_USERNAME
+    value: RedisStackDatabaseSecretD6D-HLBDPI135oUH
+  - name: SPRING_DATASOURCE_DRIVER-CLASS-NAME
+    value: com.amazonaws.secretsmanager.sql.AWSSecretsManagerMySQLDriver
 
 service:
   type: ClusterIP
