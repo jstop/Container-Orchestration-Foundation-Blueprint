@@ -11,9 +11,9 @@ all: bootstrap build
 build:
 	make deploy
 	aws eks update-kubeconfig --name blueprint --region us-east-2 
-	./scripts/karpenter.sh
-	cd $(APP_PATH)/spring-frontend && git init && git remote add origin codecommit::us-east-2://spring-frontend && git push -u origin/main main
-	cd $(APP_PATH)/spring-backend && git init && git remote add origin codecommit::us-east-2://spring-backend && git push -u origin/main main
+	./scripts/karpenter_provisioner.sh
+	cd $(APP_PATH)/spring-frontend && git init && git add . && git commit -m 'inital commit' && git remote add origin codecommit::us-east-2://spring-frontend && git push --set-upstream origin main
+	cd $(APP_PATH)/spring-backend && git init && git add . && git commit -am 'inital commit' && git remote add origin codecommit::us-east-2://spring-backend && git push --set-upstream origin main
 
 argo-proxy:
 	echo "argo admin password: "$(ARGO_PASSWD)

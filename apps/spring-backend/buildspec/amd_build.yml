@@ -24,4 +24,4 @@ phases:
       - echo Build completed on `date`
       - echo Pushing the Docker images...
       - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - docker push $REPOSITORY_URI:dev-amd-64
+      - docker push $REPOSITORY_URI:dev-amd64
