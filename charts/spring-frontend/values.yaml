@@ -5,8 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: 899456967600.dkr.ecr.us-east-2.amazonaws.com/spring-frontend
-  tag: b556792amd64
+  repository: 899456967600.dkr.ecr.us-east-2.amazonaws.com/spring-frontend:b556792amd64
   pullPolicy: IfNotPresent
 env:
   react_app_api_base_url: https://polling-api.verticalrelevancelabs.com

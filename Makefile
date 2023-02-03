@@ -27,8 +27,9 @@ destroy:
 	cd $(CDK_PATH) && cdk destroy --all 
 
 dashboard:
-	./scripts/k8_dashbard.sh
-apps:
+	./scripts/k8_dashboard.sh
+
+spring-apps:
 	./scripts/springapp.sh
 
 bootstrap:
