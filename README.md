@@ -1,4 +1,5 @@
 # Container-Orchestration-Foundation-Blueprint
+![image](https://github.com/VerticalRelevance/Container-Orchestration-Foundation-Blueprint/blob/dev/Container_Orchestrantion.png)
 
 ## Install and run CDK
 `make`
