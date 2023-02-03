@@ -23,7 +23,7 @@ spec:
       serviceAccountName: {{ template "spring-backend.fullname" . }}
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: {{ .Values.image.repository }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
 {{ toYaml .Values.env | indent 12 }}
