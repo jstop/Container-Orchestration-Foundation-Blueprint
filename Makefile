@@ -2,6 +2,7 @@
 CDK_PATH  := $(CURDIR)/blueprint
 APP_PATH  := $(CURDIR)/apps
 ARGO_PASSWD  :=`kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d`
+ACCOUNT_ID := $(shell aws sts get-caller-identity --query Account --output text)
 
 # Dependecies
 HOMEBREW_LIBS :=  nvm typescript argocd git-remote-codecommit
@@ -37,6 +38,7 @@ bootstrap:
 		LIB=$$LIB make check-lib ; \
     done
 	cd $(CDK_PATH) && npm install
+	cdk bootstrap aws://$(ACCOUNT_ID)/us-east-2
 
 check-lib:
 ifeq ($(shell brew ls --versions $(LIB)),)

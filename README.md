@@ -11,7 +11,7 @@
 With argo-proxy running:
 ```
 make dashboard
-make apps
+make spring-apps
 ```
 
 ### argocd UI
