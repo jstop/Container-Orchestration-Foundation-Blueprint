@@ -44,9 +44,9 @@ resources: {}
   # limits:
   #  cpu: 100m
   #  memory: 128Mi
-  # requests:
-  #  cpu: 100m
-  #  memory: 128Mi
+   requests:
+    cpu: 1
+    memory: .5Gi
 
 nodeSelector:
   intent: apps
