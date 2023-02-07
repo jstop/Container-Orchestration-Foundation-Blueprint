@@ -9,7 +9,7 @@ image:
   tag: dev-amd64
   pullPolicy: IfNotPresent
 env:
-  react_app_api_base_url: https://polling-api.verticalrelevancelabs.com
+  react_app_api_base_url: https://polling-api.verticalrelevancelabs.com/api
 
 service:
   type: ClusterIP
