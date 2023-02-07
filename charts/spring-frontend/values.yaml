@@ -42,7 +42,7 @@ resources: {}
   #  memory: 128Mi
    requests:
     cpu: 1
-    memory: 0.5Gi
+    memory: 512Mi
 
 nodeSelector:
   intent: apps
