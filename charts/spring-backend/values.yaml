@@ -5,7 +5,7 @@
 replicaCount: 3
 
 image:
-  repository: 899456967600.dkr.ecr.us-east-2.amazonaws.com/spring-backend:dev-amd64	
+  repository: 899456967600.dkr.ecr.us-east-2.amazonaws.com/spring-backend:4782174amd64	
   pullPolicy: IfNotPresent
 env:
   - name: SPRING_DATASOURCE_URL 
