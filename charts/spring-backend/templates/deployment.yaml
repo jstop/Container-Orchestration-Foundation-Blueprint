@@ -33,11 +33,11 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /acutator/health/liveness
+              path: /actuator/health/liveness
               port: http
           readinessProbe:
             httpGet:
-              path: /acutator/health/readiness
+              path: /actuator/health/readiness
               port: http
           resources:
 {{ toYaml .Values.resources | indent 12 }}
