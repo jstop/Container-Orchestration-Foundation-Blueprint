@@ -79,7 +79,7 @@ export class PipelineStack extends cdk.Stack {
                 'RDS_SECRET_NAME': { value: rdsSecretName },
             }
         });
-        const post_build_role = arm_build.role as iam.Role;
+        const post_build_role = post_build.role as iam.Role;
         post_build_role.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonEC2ContainerRegistryFullAccess'));
         post_build_role.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMReadOnlyAccess'));
         post_build_role.addToPolicy(new iam.PolicyStatement({

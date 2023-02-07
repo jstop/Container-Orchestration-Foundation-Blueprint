@@ -10,7 +10,7 @@ phases:
       - IMAGE_TAG=${COMMIT_HASH:=latest}amd64
       - echo $REPOSITORY_URI
       - echo $IMAGE_TAG
-        #- echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin
+      - echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin
   build:
     commands:
       - echo Build started on `date`
@@ -23,4 +23,4 @@ phases:
       - echo Build completed on `date`
       - echo Pushing the Docker images...
       - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - docker push $REPOSITORY_URI:dev-amd-64
+      - docker push $REPOSITORY_URI:dev-amd64

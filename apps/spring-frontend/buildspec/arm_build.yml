@@ -10,7 +10,7 @@ phases:
       - IMAGE_TAG=${COMMIT_HASH:=latest}arm64
       - echo $REPOSITORY_URI
       - echo $IMAGE_TAG
-        #- echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin
+      - echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin
   build:
     commands:
       - echo Build started on `date`

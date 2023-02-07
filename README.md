@@ -1,4 +1,5 @@
 # Container-Orchestration-Foundation-Blueprint
+![image](https://github.com/VerticalRelevance/Container-Orchestration-Foundation-Blueprint/blob/main/Container_Orchestration.drawio.png)
 
 ## Install and run CDK
 `make`
@@ -10,7 +11,7 @@
 With argo-proxy running:
 ```
 make dashboard
-make apps
+make spring-apps
 ```
 
 ### argocd UI

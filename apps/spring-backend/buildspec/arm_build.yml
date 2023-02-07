@@ -10,7 +10,7 @@ phases:
       - IMAGE_TAG=${COMMIT_HASH:=latest}arm64
       - echo $REPOSITORY_URI
       - echo $IMAGE_TAG
-        #- echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin
+      - echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin
   build:
     commands:
       - echo Build started on `date`
@@ -19,8 +19,10 @@ phases:
         #- ./mvnw package
       - docker build -t $REPOSITORY_URI:latest .
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:dev-arm64
   post_build:
     commands:
       - echo Build completed on `date`
       - echo Pushing the Docker images...
       - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - docker push $REPOSITORY_URI:dev-arm64

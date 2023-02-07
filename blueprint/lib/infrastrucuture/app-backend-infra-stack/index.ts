@@ -31,7 +31,8 @@ export class AppBackendInfrastructureStack extends cdk.Stack {
         description: 'Security group for RDS MySQL',
         securityGroupName: 'RDSSecurityGroup'
     });
-      // Create an RDS Cluster with Aurora Serverless and initial database name polling
+
+    // Create an RDS Cluster with Aurora Serverless and initial database name polling
     const rdsCluster = new rds.DatabaseCluster(this, 'Database', {
         engine: rds.DatabaseClusterEngine.auroraMysql({ version: rds.AuroraMysqlEngineVersion.VER_2_10_0 }),
         credentials: rds.Credentials.fromGeneratedSecret('clusteradmin'), // Optional - will default to 'admin' username and generated password
@@ -39,7 +40,7 @@ export class AppBackendInfrastructureStack extends cdk.Stack {
         instanceProps: {
           instanceType: ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE2, ec2.InstanceSize.SMALL),
           vpcSubnets: {
-            subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
+            subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
           },
           vpc,
           securityGroups: [rdsSecurityGroup],
