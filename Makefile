@@ -21,7 +21,7 @@ argo-proxy:
 	kubectl port-forward service/blueprints-addon-argocd-server -n argocd 8080:443
 	
 deploy:
-	cd $(CDK_PATH) && cdk deploy --all 
+	cd $(CDK_PATH) && cdk deploy --all --concurrency 5 --require-approval never #--outputs-file $(CURDIR)/outputs.json
 
 destroy:
 	eksctl delete iamserviceaccount --config-file=./tmp/service_account.yaml --approve 
