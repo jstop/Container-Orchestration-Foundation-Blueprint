@@ -38,7 +38,9 @@ const addOns: Array<blueprints.ClusterAddOn> = [
     new blueprints.addons.VpcCniAddOn(),
     new blueprints.addons.KarpenterAddOn( {
         subnetTags: {
-            "Name": "blueprint/blueprint-vpc/PrivateSubnet1",
+            "aws:cloudformation:stack-name": "blueprint",
+            "aws-cdk:subnet-type": "Private"
+
         },
         securityGroupTags: {
             "kubernetes.io/cluster/blueprint": "owned",
