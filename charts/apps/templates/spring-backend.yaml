@@ -4,11 +4,7 @@ metadata:
   name: spring-backend
   namespace: argocd
   annotations:
-    argocd-image-updater.argoproj.io/image-list: api=899456967600.dkr.ecr.us-east-2.amazonaws.com/spring-backend
-    argocd-image-updater.argoproj.io/image-list: api
-    argocd-image-updater.argoproj.io/api.update-strategy: digest 
-    #argocd-image-updater.argoproj.io/api.platforms: linux/amd64
-
+    argocd-image-updater.argoproj.io/image-list: 899456967600.dkr.ecr.us-east-2.amazonaws.com/spring-backend
   finalizers:
   - resources-finalizer.argocd.argoproj.io
 spec:
