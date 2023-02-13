@@ -5,6 +5,7 @@ ARGO_PASSWD  :=`kubectl -n argocd get secret argocd-initial-admin-secret -o json
 export AWS_ACCOUNT := $(shell aws sts get-caller-identity --query Account --output text)
 export AWS_REGION := $(shell aws configure get region)
 
+
 # Dependecies
 HOMEBREW_LIBS :=  nvm typescript argocd git-remote-codecommit
 
@@ -41,6 +42,7 @@ bootstrap:
     done
 	cd $(CDK_PATH) && npm install
 	cdk bootstrap aws://$(AWS_ACCOUNT)/$(AWS_REGION)
+
 
 check-lib:
 ifeq ($(shell brew ls --versions $(LIB)),)
