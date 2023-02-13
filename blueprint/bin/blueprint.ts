@@ -9,13 +9,27 @@ import * as team from '../lib/teams';
 import * as infrastructure from '../lib/infrastrucuture';
 
 const app = new cdk.App();
-const account = '899456967600';
-const region = 'us-east-2';
 
+// use environment variables to pass in the parameters
+declare var process : {
+  env: {
+    CDK_DEFAULT_ACCOUNT: string
+    CDK_DEFAULT_REGION: string
+  }
+}
 
-const platformTeam = new team.TeamPlatform(account)
+const env = {
+    account: process.env.CDK_DEFAULT_ACCOUNT,
+    region: process.env.CDK_DEFAULT_REGION
+}
+
+// Declare Teams for EKS blueprint
+const platformTeam = new team.TeamPlatform(env.account)
 const teams: Array<blueprints.Team> = [ platformTeam ];
 
+
+
+// Policy Resource for AwsForFluentBitAddOn
 const cloudWatchLogPolicy = new iam.PolicyStatement({
     actions: [
         'logs:CreateLogGroup',
@@ -25,12 +39,13 @@ const cloudWatchLogPolicy = new iam.PolicyStatement({
     resources: ["*"],
 })
 
+//Domain Name for ExternalDnsAddOn
 const domainName = "verticalrelevancelabs.com";
 
+// Declare Addon for EKS blueprint
 const addOns: Array<blueprints.ClusterAddOn> = [
     new blueprints.addons.ArgoCDAddOn(),
     new blueprints.addons.MetricsServerAddOn,
-    //new blueprints.addons.ClusterAutoScalerAddOn,
     new blueprints.addons.AwsLoadBalancerControllerAddOn(),
     new blueprints.addons.ExternalDnsAddOn({
         hostedZoneResources: ["HostedZone"]
@@ -47,14 +62,13 @@ const addOns: Array<blueprints.ClusterAddOn> = [
         }
     }
     ),
-    new blueprints.addons.CertManagerAddOn(),
     new blueprints.addons.AwsForFluentBitAddOn({ 
         version: '0.1.22',
         iamPolicies: [cloudWatchLogPolicy],
         values: {
             cloudWatch: {
                 enabled: true,
-                region: region,
+                region: env.region,
             },
             firehose: {
                 enabled: false,
@@ -69,9 +83,10 @@ const addOns: Array<blueprints.ClusterAddOn> = [
     }),
 ];
 
+// create the blueprint EKS stack
 const stack = blueprints.EksBlueprint.builder()
-    .account(account)
-    .region(region)
+    .account(env.account)
+    .region(env.region)
     .resourceProvider("HostedZone", new blueprints.LookupHostedZoneProvider(domainName))
     .addOns(...addOns)
     .teams(...teams)
@@ -82,10 +97,10 @@ const clusterSecurityGroup = stack.getClusterInfo().cluster.clusterSecurityGroup
 
 const backend = new infrastructure.AppBackendInfrastructureStack(app, 'RDSStack', { 
     vpc: vpc, 
-    env: { account: account, region: region } 
+    env: { account: env.account, region: env.region } 
 });
 backend.rdsSecurityGroup.addIngressRule(clusterSecurityGroup, ec2.Port.tcp(3306), 'Access from cluster Security Group');
 
-const springBackendPipeline = new infrastructure.PipelineStack(app, 'SpringBackendPipelineStack',  { rdsCluster: backend.rdsCluster, rdsSecretName: backend.rdsSecretName, pipelineName: 'spring-backend', env: { account: account, region: region } });
-const springFrontendPipeline = new infrastructure.PipelineStack(app, 'SpringFrontendPipelineStack',  { rdsCluster: backend.rdsCluster, rdsSecretName: backend.rdsSecretName, pipelineName: 'spring-frontend', env: { account: account, region: region } });
+const springBackendPipeline = new infrastructure.PipelineStack(app, 'SpringBackendPipelineStack',  { rdsCluster: backend.rdsCluster, rdsSecretName: backend.rdsSecretName, pipelineName: 'spring-backend', env: { account: env.account, region: env.region } });
+const springFrontendPipeline = new infrastructure.PipelineStack(app, 'SpringFrontendPipelineStack',  { rdsCluster: backend.rdsCluster, rdsSecretName: backend.rdsSecretName, pipelineName: 'spring-frontend', env: { account: env.account, region: env.region } });
 
