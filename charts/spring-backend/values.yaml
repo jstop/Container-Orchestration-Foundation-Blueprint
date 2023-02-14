@@ -12,7 +12,7 @@ env:
   - name: SPRING_DATASOURCE_URL 
     value: jdbc-secretsmanager:mysql://rdsstack-databaseb269d8bb-3vjalqvgxl3b.cluster-cetdtvws2z9p.us-east-2.rds.amazonaws.com:3306/polling?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
   - name: SPRING_DATASOURCE_USERNAME
-    value: RDSStackDatabaseSecretA3C9F-6O763xlDejfF	
+    value: 	RDSStackDatabaseSecretA3C9F-flne6a6C1rhC
   - name: SPRING_DATASOURCE_DRIVER-CLASS-NAME
     value: com.amazonaws.secretsmanager.sql.AWSSecretsManagerMySQLDriver
 
