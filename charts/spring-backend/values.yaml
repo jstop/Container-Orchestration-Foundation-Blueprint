@@ -5,8 +5,9 @@
 replicaCount: 3
 
 image:
-  repository: 899456967600.dkr.ecr.us-east-2.amazonaws.com/spring-backend:4e9b633amd64
-  pullPolicy: IfNotPresent
+  repository: 899456967600.dkr.ecr.us-east-2.amazonaws.com/spring-backend
+  tag: dev-amd64
+  pullPolicy: Always
 env:
   - name: SPRING_DATASOURCE_URL 
     value: jdbc-secretsmanager:mysql://rdsstack-databaseb269d8bb-3vjalqvgxl3b.cluster-cetdtvws2z9p.us-east-2.rds.amazonaws.com:3306/polling?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false

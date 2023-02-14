@@ -3,6 +3,7 @@ import { Construct } from 'constructs';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { ISecurityGroup, IVpc } from 'aws-cdk-lib/aws-ec2';
+import { Repository } from 'aws-cdk-lib/aws-codecommit';
 
 interface AppBackendInfrastructureStackProps extends cdk.StackProps {
   vpc: IVpc;
@@ -50,5 +51,10 @@ export class AppBackendInfrastructureStack extends cdk.Stack {
     this.rdsSecretName = rdsCluster.secret?.secretName || '';
     this.rdsCluster = rdsCluster;
     this.rdsSecurityGroup = rdsSecurityGroup;
+
+    //  create CodeCommit repo for charts
+    const codeCommitRepo = new Repository(this, "CodeCommitRepository",{
+        repositoryName: "blueprint-apps"
+    });
   }
 }

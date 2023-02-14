@@ -12,10 +12,10 @@ const app = new cdk.App();
 
 // use environment variables to pass in the parameters
 declare var process : {
-  env: {
-    CDK_DEFAULT_ACCOUNT: string
-    CDK_DEFAULT_REGION: string
-  }
+    env: {
+        CDK_DEFAULT_ACCOUNT: string
+        CDK_DEFAULT_REGION: string
+    }
 }
 
 const env = {
@@ -44,14 +44,41 @@ const domainName = "verticalrelevancelabs.com";
 
 // Declare Addon for EKS blueprint
 const addOns: Array<blueprints.ClusterAddOn> = [
-    new blueprints.addons.ArgoCDAddOn(),
+    new blueprints.addons.SecretsStoreAddOn,
+    new blueprints.addons.ArgoCDAddOn({
+        bootstrapRepo: {
+            repoUrl: 'ssh://git-codecommit.us-east-2.amazonaws.com/v1/repos/blueprint-apps',
+            path: 'apps',
+            //credentialsSecretName: 'blueprint-github-ssh-json',
+            //credentialsType: 'SSH'
+        },
+        namespace: "argocd",
+        values: {
+            server: {
+                ingress: {
+                    enabled: true,
+                    hosts: [
+                        "argo.verticalrelevancelabs.com"
+                    ],
+                    ingressClassName: "alb",
+                    annotations: {
+                        "alb.ingress.kubernetes.io/certificate-arn": "arn:aws:acm:us-east-2:899456967600:certificate/e0e84eda-6739-4ab4-a65d-db7247a64d4d",
+                        "alb.ingress.kubernetes.io/scheme": "internet-facing",
+                        "alb.ingress.kubernetes.io/target-type": "ip",
+                        "external-dns.alpha.kubernetes.io/hostname": "argo.verticalrelevancelabs.com"
+                    }
+                }
+            }
+        }
+    
+    }),
     new blueprints.addons.MetricsServerAddOn,
     new blueprints.addons.AwsLoadBalancerControllerAddOn(),
     new blueprints.addons.ExternalDnsAddOn({
         hostedZoneResources: ["HostedZone"]
     }),
     new blueprints.addons.VpcCniAddOn(),
-    new blueprints.addons.KarpenterAddOn( {
+    new blueprints.addons.KarpenterAddOn({
         subnetTags: {
             "aws:cloudformation:stack-name": "blueprint",
             "aws-cdk:subnet-type": "Private"
@@ -60,8 +87,7 @@ const addOns: Array<blueprints.ClusterAddOn> = [
         securityGroupTags: {
             "kubernetes.io/cluster/blueprint": "owned",
         }
-    }
-    ),
+    }),
     new blueprints.addons.AwsForFluentBitAddOn({ 
         version: '0.1.22',
         iamPolicies: [cloudWatchLogPolicy],
@@ -103,4 +129,3 @@ backend.rdsSecurityGroup.addIngressRule(clusterSecurityGroup, ec2.Port.tcp(3306)
 
 const springBackendPipeline = new infrastructure.PipelineStack(app, 'SpringBackendPipelineStack',  { rdsCluster: backend.rdsCluster, rdsSecretName: backend.rdsSecretName, pipelineName: 'spring-backend', env: { account: env.account, region: env.region } });
 const springFrontendPipeline = new infrastructure.PipelineStack(app, 'SpringFrontendPipelineStack',  { rdsCluster: backend.rdsCluster, rdsSecretName: backend.rdsSecretName, pipelineName: 'spring-frontend', env: { account: env.account, region: env.region } });
-
