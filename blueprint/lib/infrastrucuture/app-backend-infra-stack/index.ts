@@ -35,7 +35,7 @@ export class AppBackendInfrastructureStack extends cdk.Stack {
 
     // Create an RDS Cluster with Aurora Serverless and initial database name polling
     const rdsCluster = new rds.DatabaseCluster(this, 'Database', {
-        engine: rds.DatabaseClusterEngine.auroraMysql({ version: rds.AuroraMysqlEngineVersion.VER_2_10_0 }),
+        engine: rds.DatabaseClusterEngine.auroraMysql({ version: rds.AuroraMysqlEngineVersion.VER_2_11_3 }),
         credentials: rds.Credentials.fromGeneratedSecret('clusteradmin'), // Optional - will default to 'admin' username and generated password
         defaultDatabaseName: 'polling',
         instanceProps: {
