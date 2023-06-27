@@ -6,6 +6,7 @@
 
 ### Setup Argo Proxy
 `make argo-proxy`
+This will not complete and should be left open. Use another terminal while this is running to finish dashboard and app installation.
 
 ### Install Dashboard and Apps
 With argo-proxy running:
