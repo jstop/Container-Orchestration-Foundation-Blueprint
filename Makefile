@@ -7,7 +7,7 @@ export AWS_REGION := $(shell aws configure get region)
 
 
 # Dependecies
-HOMEBREW_LIBS :=  nvm typescript argocd git-remote-codecommit
+HOMEBREW_LIBS :=  nvm typescript argocd git-remote-codecommit eksctl kubernetes-cli
 
 all: bootstrap build
 	
