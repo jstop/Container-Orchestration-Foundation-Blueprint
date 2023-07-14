@@ -1,5 +1,5 @@
 #### Stage 1: Build the react application
-FROM node:12.4.0-alpine as build
+FROM public.ecr.aws/docker/library/node:erbium-alpine as build
 
 # Configure the main working directory inside the docker image. 
 # This is the base directory used in any further RUN, COPY, and ENTRYPOINT 
@@ -24,7 +24,7 @@ ENV REACT_APP_API_BASE_URL=${REACT_APP_API_BASE_URL}
 RUN npm run build
 
 #### Stage 2: Serve the React application from Nginx 
-FROM nginx:1.17.0-alpine
+FROM public.ecr.aws/nginx/nginx:1.25-alpine
 
 # Copy the react build from Stage 1
 COPY --from=build /app/build /var/www

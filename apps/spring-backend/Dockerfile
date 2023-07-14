@@ -1,5 +1,5 @@
 #### Stage 1: Build the application
-FROM amazoncorretto:11 as build
+FROM public.ecr.aws/amazoncorretto/amazoncorretto:11 as build
 
 # Set the current working directory inside the image
 WORKDIR /app
@@ -24,7 +24,7 @@ RUN ./mvnw package -DskipTests -e
 RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
 #### Stage 2: A minimal docker image with command to run the app 
-FROM amazoncorretto:11
+FROM public.ecr.aws/amazoncorretto/amazoncorretto:11
 
 ARG DEPENDENCY=/app/target/dependency
 

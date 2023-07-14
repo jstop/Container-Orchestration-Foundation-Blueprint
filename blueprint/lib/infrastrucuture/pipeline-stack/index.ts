@@ -7,7 +7,6 @@ import { Repository } from 'aws-cdk-lib/aws-codecommit';
 import * as ecr from 'aws-cdk-lib/aws-ecr';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { IDatabaseCluster } from 'aws-cdk-lib/aws-rds';
-import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 
 
 interface PipelineStackProps extends cdk.StackProps {
@@ -21,7 +20,6 @@ export class PipelineStack extends cdk.Stack {
         super(scope, id, props);
 
         const { rdsCluster, rdsSecretName, pipelineName } = props;
-        const secret = secretsmanager.Secret.fromSecretNameV2(this, 'password', 'dockerhubSecret');
 
         //  create ECR Repo
         const ecrRepo = new ecr.Repository(this, 'EcrRepo',{
@@ -40,9 +38,7 @@ export class PipelineStack extends cdk.Stack {
                 buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2_ARM,
                 privileged: true,
             },
-            environmentVariables: {  
-                'DOCKERHUB_USERNAME': { value: 'vrlabs' },
-                'DOCKERHUB_PASSWORD': { value: `${secret.secretArn}:password`, type: codebuild.BuildEnvironmentVariableType.SECRETS_MANAGER },
+            environmentVariables: {
                 'REPOSITORY_URI': { value: ecrRepo.repositoryUri },
                 'RDS_ENDPOINT': { value: rdsCluster.clusterEndpoint.hostname },
                 'RDS_SECRET_NAME': { value: rdsSecretName },
@@ -59,9 +55,7 @@ export class PipelineStack extends cdk.Stack {
                 buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2_3,
                 privileged: true,
             },
-            environmentVariables: {  
-                'DOCKERHUB_USERNAME': { value: 'vrlabs' },
-                'DOCKERHUB_PASSWORD': { value: `${secret.secretArn}:password`, type: codebuild.BuildEnvironmentVariableType.SECRETS_MANAGER },
+            environmentVariables: {
                 'REPOSITORY_URI': { value: ecrRepo.repositoryUri },
                 'REACT_APP_API_BASE_URL': { value: 'https://polling-api.verticalrelevancelabs.com' },
             }
