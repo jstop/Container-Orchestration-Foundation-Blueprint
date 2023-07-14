@@ -10,9 +10,9 @@ image:
   pullPolicy: Always
 env:
   - name: SPRING_DATASOURCE_URL 
-    value: jdbc-secretsmanager:mysql://rdsstack-databaseinstance2aa380dee-wkqziv2e06r6.cetdtvws2z9p.us-east-2.rds.amazonaws.com:3306/polling?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+    value: jdbc-secretsmanager:mysql://rdsstack-databaseb269d8bb-bh4ljnentehz.cluster-cetdtvws2z9p.us-east-2.rds.amazonaws.com:3306/polling?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
   - name: SPRING_DATASOURCE_USERNAME
-    value: 	RDSStackDatabaseSecretA3C9F-flne6a6C1rhC
+    value: RDSStackDatabaseSecretA3C9F-lBwLq0ffdGUK
   - name: SPRING_DATASOURCE_DRIVER-CLASS-NAME
     value: com.amazonaws.secretsmanager.sql.AWSSecretsManagerMySQLDriver
 
