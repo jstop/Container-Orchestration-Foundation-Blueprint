@@ -4,7 +4,8 @@ APP_PATH  := $(CURDIR)/apps
 ARGO_PASSWD  :=`kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d`
 export AWS_ACCOUNT := $(shell aws sts get-caller-identity --query Account --output text)
 export AWS_REGION := $(shell aws configure get region)
-
+export PLATFORM_TEAM_USER_ROLE_ARN := arn:aws:iam::${AWS_ACCOUNT}:role/AWSReservedSSO_AWSAdministratorAccess_30f517a3940f0385
+export HOSTED_ZONE_NAME := verticalrelevancelabs.com
 
 # Dependecies
 HOMEBREW_LIBS :=  nvm typescript argocd git-remote-codecommit eksctl kubernetes-cli
@@ -28,8 +29,9 @@ deploy:
 	cd $(CDK_PATH) && . ${NVM_DIR}/nvm.sh && nvm use && npx cdk deploy --all --concurrency 5 --require-approval never --outputs-file $(CURDIR)/outputs.json
 
 destroy:
-#	eksctl delete iamserviceaccount --config-file=./tmp/service_account.yaml --approve 
-	cd $(CDK_PATH) && npx cdk destroy --all 
+	eksctl delete iamserviceaccount --config-file=./tmp/service_account.yaml --approve
+	./scripts/springapp-destroy.sh
+	# cd $(CDK_PATH) && npx cdk destroy --all 
 
 dashboard:
 	./scripts/k8_dashboard.sh
@@ -52,3 +54,6 @@ ifeq ($(shell brew ls --versions $(LIB)),)
 else
 	@echo $(LIB) is already installed, skipping.
 endif
+
+synth:
+	cd $(CDK_PATH) && npx cdk synth

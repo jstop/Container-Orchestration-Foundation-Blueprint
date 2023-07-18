@@ -1,2 +1,0 @@
-ALTER TABLE task
-ADD COLUMN kanban_id INTEGER  REFERENCES kanban(id);

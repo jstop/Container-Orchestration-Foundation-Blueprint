@@ -1,8 +1,6 @@
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import * as blueprints from '@aws-quickstart/eks-blueprints';
-import { ArnPrincipal } from "aws-cdk-lib/aws-iam";
-import * as eks from 'aws-cdk-lib/aws-eks';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as team from '../lib/teams';
@@ -13,9 +11,10 @@ const app = new cdk.App();
 // use environment variables to pass in the parameters
 declare var process : {
     env: {
-        CDK_DEFAULT_ACCOUNT: string
-        CDK_DEFAULT_REGION: string
-    }
+        CDK_DEFAULT_ACCOUNT: string;
+        CDK_DEFAULT_REGION: string;
+        HOSTED_ZONE_NAME: string;
+    };
 }
 
 const env = {
@@ -24,10 +23,8 @@ const env = {
 }
 
 // Declare Teams for EKS blueprint
-const platformTeam = new team.TeamPlatform(env.account)
+const platformTeam = new team.TeamPlatform();
 const teams: Array<blueprints.Team> = [ platformTeam ];
-
-
 
 // Policy Resource for AwsForFluentBitAddOn
 const cloudWatchLogPolicy = new iam.PolicyStatement({
@@ -40,17 +37,18 @@ const cloudWatchLogPolicy = new iam.PolicyStatement({
 })
 
 //Domain Name for ExternalDnsAddOn
-const domainName = "verticalrelevancelabs.com";
+const { HOSTED_ZONE_NAME: domainName } = process.env;
+const argoHost = `argo.${domainName}`;
+
+const prereqsStack = new infrastructure.PrerequisitesStack(app, 'PrerequisitesStack', { env, domainName });
 
 // Declare Addon for EKS blueprint
 const addOns: Array<blueprints.ClusterAddOn> = [
     new blueprints.addons.SecretsStoreAddOn,
     new blueprints.addons.ArgoCDAddOn({
         bootstrapRepo: {
-            repoUrl: 'ssh://git-codecommit.us-east-2.amazonaws.com/v1/repos/blueprint-apps',
+            repoUrl: prereqsStack.codeCommitRepo.repositoryCloneUrlSsh,
             path: 'apps',
-            //credentialsSecretName: 'blueprint-github-ssh-json',
-            //credentialsType: 'SSH'
         },
         namespace: "argocd",
         values: {
@@ -58,14 +56,14 @@ const addOns: Array<blueprints.ClusterAddOn> = [
                 ingress: {
                     enabled: true,
                     hosts: [
-                        "argo.verticalrelevancelabs.com"
+                        argoHost
                     ],
                     ingressClassName: "alb",
                     annotations: {
-                        "alb.ingress.kubernetes.io/certificate-arn": "arn:aws:acm:us-east-2:899456967600:certificate/e0e84eda-6739-4ab4-a65d-db7247a64d4d",
+                        "alb.ingress.kubernetes.io/certificate-arn": prereqsStack.certificate.certificateArn,
                         "alb.ingress.kubernetes.io/scheme": "internet-facing",
                         "alb.ingress.kubernetes.io/target-type": "ip",
-                        "external-dns.alpha.kubernetes.io/hostname": "argo.verticalrelevancelabs.com"
+                        "external-dns.alpha.kubernetes.io/hostname": argoHost
                     }
                 }
             }
@@ -118,14 +116,13 @@ const stack = blueprints.EksBlueprint.builder()
     .teams(...teams)
     .build(app, 'blueprint');
 
-const vpc = stack.getClusterInfo().cluster.vpc;
-const clusterSecurityGroup = stack.getClusterInfo().cluster.clusterSecurityGroup;
+const cluster = stack.getClusterInfo().cluster;
 
 const backend = new infrastructure.AppBackendInfrastructureStack(app, 'RDSStack', { 
-    vpc: vpc, 
-    env: { account: env.account, region: env.region } 
+    vpc: cluster.vpc,
+    env,
 });
-backend.rdsSecurityGroup.addIngressRule(clusterSecurityGroup, ec2.Port.tcp(3306), 'Access from cluster Security Group');
+backend.rdsSecurityGroup.addIngressRule(cluster.clusterSecurityGroup, ec2.Port.tcp(backend.rdsCluster.clusterEndpoint.port), 'Access from cluster Security Group');
 
-const springBackendPipeline = new infrastructure.PipelineStack(app, 'SpringBackendPipelineStack',  { rdsCluster: backend.rdsCluster, rdsSecretName: backend.rdsSecretName, pipelineName: 'spring-backend', env: { account: env.account, region: env.region } });
-const springFrontendPipeline = new infrastructure.PipelineStack(app, 'SpringFrontendPipelineStack',  { rdsCluster: backend.rdsCluster, rdsSecretName: backend.rdsSecretName, pipelineName: 'spring-frontend', env: { account: env.account, region: env.region } });
+new infrastructure.PipelineStack(app, 'SpringBackendPipelineStack',  { pipelineName: 'spring-backend', env });
+new infrastructure.PipelineStack(app, 'SpringFrontendPipelineStack',  { pipelineName: 'spring-frontend', env });

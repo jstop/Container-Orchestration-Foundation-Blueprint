@@ -3,7 +3,6 @@ import { Construct } from 'constructs';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { ISecurityGroup, IVpc } from 'aws-cdk-lib/aws-ec2';
-import { Repository } from 'aws-cdk-lib/aws-codecommit';
 
 interface AppBackendInfrastructureStackProps extends cdk.StackProps {
   vpc: IVpc;
@@ -20,14 +19,9 @@ export class AppBackendInfrastructureStack extends cdk.Stack {
     // Get the vpc and rdsSecurityGroup from vpc and security stack
     const { vpc } = props;
 
-    // Get all private subnet ids
-    const privateSubnets = vpc.privateSubnets.map((subnet) => {
-      return subnet.subnetId
-    });
-
     // Create security Group for rds Cluster
     const rdsSecurityGroup = new ec2.SecurityGroup(this, 'RDSSecurityGroup', {
-        vpc: vpc,
+        vpc,
         allowAllOutbound: true,
         description: 'Security group for RDS MySQL',
         securityGroupName: 'RDSSecurityGroup'
@@ -46,15 +40,20 @@ export class AppBackendInfrastructureStack extends cdk.Stack {
           vpc,
           securityGroups: [rdsSecurityGroup],
         },
-      });
+    });
 
     this.rdsSecretName = rdsCluster.secret?.secretName || '';
     this.rdsCluster = rdsCluster;
     this.rdsSecurityGroup = rdsSecurityGroup;
 
-    //  create CodeCommit repo for charts
-    const codeCommitRepo = new Repository(this, "CodeCommitRepository",{
-        repositoryName: "blueprint-apps"
+    new cdk.CfnOutput(this, 'RDSSecretName', {
+        value: this.rdsSecretName,
+        description: 'RDS Secret Name',
+    });
+
+    new cdk.CfnOutput(this, 'SpringDatasourceUrl', {
+        value: `jdbc-secretsmanager:mysql://${this.rdsCluster.clusterEndpoint.hostname}:${this.rdsCluster.clusterEndpoint.port}/polling?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false`,
+        description: 'RDS Cluster Endpoint',
     });
   }
 }
