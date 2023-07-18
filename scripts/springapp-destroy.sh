@@ -1,1 +1,1 @@
-argocd app delete polling-app
+argocd app delete polling-app --yes

@@ -11,8 +11,8 @@ kubectl create namespace api
 #Create network policy to deny all traffic to the api and public  namespace
 ./scripts/deny-all.sh
 
-argocd repo add git@github.com:VerticalRelevance/Container-Orchestration-Foundation-Blueprint.git --ssh-private-key-path ~/.ssh/id_ed25519
-argocd app create polling-app --repo git@github.com/VerticalRelevance/Container-Orchestration-Foundation-Blueprint.git --revision dev --dest-server https://kubernetes.default.svc  --dest-namespace default --path ./charts/apps --validate=false --sync-policy automated --auto-prune --helm-set replicaCount=2
+argocd repo add ${GIT_REMOTE_URL} --ssh-private-key-path ~/.ssh/id_ed25519
+argocd app create polling-app --repo ${GIT_REMOTE_URL} --revision ${GIT_CURRENT_BRANCH} --dest-server https://kubernetes.default.svc  --dest-namespace default --path ./charts/apps --validate=false --sync-policy automated --auto-prune --helm-set replicaCount=2
 
 argocd app sync polling-app
 argocd app sync spring-frontend

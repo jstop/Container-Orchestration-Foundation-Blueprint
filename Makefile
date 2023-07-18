@@ -6,6 +6,10 @@ export AWS_ACCOUNT := $(shell aws sts get-caller-identity --query Account --outp
 export AWS_REGION := $(shell aws configure get region)
 export PLATFORM_TEAM_USER_ROLE_ARN := arn:aws:iam::${AWS_ACCOUNT}:role/AWSReservedSSO_AWSAdministratorAccess_30f517a3940f0385
 export HOSTED_ZONE_NAME := verticalrelevancelabs.com
+export FRONTEND_HOSTNAME := polling.${HOSTED_ZONE_NAME}
+export BACKEND_HOSTNAME := polling-api.${HOSTED_ZONE_NAME}
+export GIT_CURRENT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
+export GIT_REMOTE_URL := $(shell git remote get-url origin)
 
 # Dependecies
 HOMEBREW_LIBS :=  nvm typescript argocd git-remote-codecommit eksctl kubernetes-cli
@@ -30,7 +34,6 @@ deploy:
 
 destroy:
 	eksctl delete iamserviceaccount --config-file=./tmp/service_account.yaml --approve
-	./scripts/springapp-destroy.sh
 	# cd $(CDK_PATH) && npx cdk destroy --all 
 
 dashboard:
@@ -39,6 +42,8 @@ dashboard:
 spring-apps:
 	./scripts/springapp.sh
 
+spring-apps-destroy:
+	./scripts/springapp-destroy.sh
 
 bootstrap:
 	@for LIB in $(HOMEBREW_LIBS) ; do \
@@ -57,3 +62,6 @@ endif
 
 synth:
 	cd $(CDK_PATH) && npx cdk synth
+
+update-values:
+	cd $(CDK_PATH) && npm run update-values

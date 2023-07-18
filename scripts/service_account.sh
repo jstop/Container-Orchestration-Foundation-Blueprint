@@ -7,7 +7,7 @@ kind: ClusterConfig
 
 metadata:
   name: blueprint
-  region: us-east-2
+  region: ${AWS_REGION}
 
 iam:
   withOIDC: true

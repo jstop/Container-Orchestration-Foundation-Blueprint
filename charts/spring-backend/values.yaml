@@ -1,65 +1,38 @@
-# Default values for spring-backend.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
 replicaCount: 3
-
 image:
   repository: 899456967600.dkr.ecr.us-east-2.amazonaws.com/spring-backend
   tag: dev-amd64
   pullPolicy: Always
 env:
-  - name: SPRING_DATASOURCE_URL 
-    value: jdbc-secretsmanager:mysql://rdsstack-databaseb269d8bb-fs9087lxhurp.cluster-cetdtvws2z9p.us-east-2.rds.amazonaws.com:3306/polling?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+  - name: SPRING_DATASOURCE_URL
+    value: jdbc-secretsmanager:mysql://rdsstack-databaseb269d8bb-3yoouwrv74qe.cluster-cetdtvws2z9p.us-east-2.rds.amazonaws.com:3306/polling?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
   - name: SPRING_DATASOURCE_USERNAME
-    value: RDSStackDatabaseSecretA3C9F-3ZIEBb72svp3
+    value: RDSStackDatabaseSecretA3C9F-hBQdAMJ56EJj
   - name: SPRING_DATASOURCE_DRIVER-CLASS-NAME
     value: com.amazonaws.secretsmanager.sql.AWSSecretsManagerMySQLDriver
-
 service:
   type: ClusterIP
   port: 8080
-
 ingress:
   enabled: false
-  annotations: 
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-2:899456967600:certificate/e0e84eda-6739-4ab4-a65d-db7247a64d4d
+  annotations:
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-2:899456967600:certificate/5abac220-df58-458e-9e38-55c538d65b90
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
     external-dns.alpha.kubernetes.io/hostname: polling-api.verticalrelevancelabs.com
-
   path: /
   host: polling-api.verticalrelevancelabs.com
   hosts:
     - chart-example.local
   tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
-
-resources: 
-  # limits:
-  #  cpu: 100m
-  #  memory: 128Mi
+resources:
   requests:
-   cpu: 1000m
-   memory: 512Mi
-
+    cpu: 1000m
+    memory: 512Mi
 nodeSelector:
   intent: apps
-
 tolerations: []
-
 affinity: {}
- 
-## Spring Backend Autoscaling parameters
-## ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
-## @param autoscaling.enabled Enable Horizontal POD autoscaling for Apache
-## @param autoscaling.minReplicas Minimum number of Apache replicas
-## @param autoscaling.maxReplicas Maximum number of Apache replicas
-## @param autoscaling.targetCPU Target CPU utilization percentage
-## @param autoscaling.targetMemory Target Memory utilization percentage
-##
 autoscaling:
   enabled: false
   minReplicas: 2
