@@ -1,4 +1,4 @@
-export const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://polling-api.verticalrelevancelabs.com/api';
+export const API_BASE_URL = window.env.API_BASE_URL;
 export const ACCESS_TOKEN = 'accessToken';
 
 export const POLL_LIST_SIZE = 30;

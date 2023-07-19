@@ -16,9 +16,7 @@ RUN npm install
 # Copy the main application
 COPY . ./
 
-# Arguments
-ARG REACT_APP_API_BASE_URL
-ENV REACT_APP_API_BASE_URL=${REACT_APP_API_BASE_URL}
+ENV REACT_APP_API_BASE_URL="__API_BASE_URL__"
 
 # Build the application
 RUN npm run build
@@ -31,9 +29,11 @@ COPY --from=build /app/build /var/www
 
 # Copy our custom nginx config
 COPY nginx.conf /etc/nginx/nginx.conf
+COPY entrypoint.sh /entrypoint.sh
 
 # Expose port 3000 to the Docker host, so we can access it 
 # from the outside.
 EXPOSE 80
 
-ENTRYPOINT ["nginx","-g","daemon off;"]
+ENTRYPOINT [ "/entrypoint.sh" ]
+CMD ["nginx","-g","daemon off;"]
