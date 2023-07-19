@@ -33,17 +33,21 @@ deploy:
 	cd $(CDK_PATH) && . ${NVM_DIR}/nvm.sh && nvm use && npx cdk deploy --all --concurrency 5 --require-approval never --outputs-file $(CURDIR)/outputs.json
 
 destroy:
-	eksctl delete iamserviceaccount --config-file=./tmp/service_account.yaml --approve
-	# cd $(CDK_PATH) && npx cdk destroy --all 
+	cd $(CDK_PATH) && npx cdk destroy --all 
 
 dashboard:
 	./scripts/k8_dashboard.sh
+
+dashboard-destroy:
+	./scripts/k8_dashboard-destroy.sh
 
 spring-apps:
 	./scripts/springapp.sh
 
 spring-apps-destroy:
 	./scripts/springapp-destroy.sh
+
+argo-destroy: dashboard-destroy spring-apps-destroy
 
 bootstrap:
 	@for LIB in $(HOMEBREW_LIBS) ; do \
