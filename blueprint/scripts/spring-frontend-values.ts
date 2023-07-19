@@ -2,11 +2,6 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { parse, stringify} from 'yaml';
 
-interface Env extends Object {
-    name: string;
-    value: string;
-}
-
 const { FRONTEND_HOSTNAME } = process.env;
 
 const outputs = require('../../outputs.json');

@@ -7,7 +7,7 @@ interface Env extends Object {
     value: string;
 }
 
-const { BACKEND_HOSTNAME } = process.env;
+const { BACKEND_HOSTNAME, FRONTEND_HOSTNAME } = process.env;
 
 const outputs = require('../../outputs.json');
 const values_filename = path.join(__dirname, '../../charts/spring-backend/values.yaml');
@@ -21,6 +21,7 @@ obj.ingress.annotations['external-dns.alpha.kubernetes.io/hostname'] = BACKEND_H
 obj.ingress.host = BACKEND_HOSTNAME;
 obj.env.find((e: Env) => e.name === 'SPRING_DATASOURCE_URL').value = outputs.RDSStack.SpringDatasourceUrl;
 obj.env.find((e: Env) => e.name === 'SPRING_DATASOURCE_USERNAME').value = outputs.RDSStack.RDSSecretName;
+obj.env.find((e: Env) => e.name === 'APP_CORS_ALLOWEDORIGINS').value = `https://${FRONTEND_HOSTNAME}`;
 
 const yaml_string = stringify(obj);
 console.log(yaml_string);

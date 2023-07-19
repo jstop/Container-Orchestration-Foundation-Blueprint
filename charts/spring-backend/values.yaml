@@ -10,6 +10,8 @@ env:
     value: RDSStackDatabaseSecretA3C9F-hBQdAMJ56EJj
   - name: SPRING_DATASOURCE_DRIVER-CLASS-NAME
     value: com.amazonaws.secretsmanager.sql.AWSSecretsManagerMySQLDriver
+  - name: APP_CORS_ALLOWEDORIGINS
+    value: https://polling.verticalrelevancelabs.com
 service:
   type: ClusterIP
   port: 8080
