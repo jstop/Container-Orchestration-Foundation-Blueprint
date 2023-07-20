@@ -36,7 +36,6 @@ export class PipelineStack extends cdk.Stack {
             },
             environmentVariables: {
                 'REPOSITORY_URI': { value: ecrRepo.repositoryUri },
-                'REACT_APP_API_BASE_URL': { value: 'https://polling-api.verticalrelevancelabs.com' },
             }
         });
         //add managed policy to codebuild role

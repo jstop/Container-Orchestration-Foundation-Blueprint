@@ -9,7 +9,7 @@
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk",
-    "update-values": "ts-node scripts/spring-backend-values.ts && ts-node scripts/spring-frontend-values.ts"
+    "update-values": "ts-node scripts/spring-backend-values.ts && ts-node scripts/spring-frontend-values.ts && ts-node scripts/apps-values.ts"
   },
   "devDependencies": {
     "@types/jest": "^29.2.4",
