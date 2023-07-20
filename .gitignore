@@ -1,3 +1,4 @@
 tmp/*
 old_code/*
 outputs.json
+.env
