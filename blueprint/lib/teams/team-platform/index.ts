@@ -1,12 +1,14 @@
 import { PlatformTeam } from '@aws-quickstart/eks-blueprints';
 
-const { PLATFORM_TEAM_USER_ROLE_ARN: userRoleArn } = process.env;
+interface TeamPlatformConfig {
+    userRoleArn: string;
+}
 
 export class TeamPlatform extends PlatformTeam {
-    constructor() {
+    constructor(config: TeamPlatformConfig) {
         super({
             name: "platform",
-            userRoleArn,
-        })
+            userRoleArn: config.userRoleArn,
+        });
     }
 }

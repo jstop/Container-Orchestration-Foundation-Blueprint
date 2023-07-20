@@ -30,7 +30,7 @@ argo-proxy:
 	kubectl port-forward service/blueprints-addon-argocd-server -n argocd 8080:443
 	
 deploy:
-	cd $(CDK_PATH) && . ${NVM_DIR}/nvm.sh && nvm use && npx cdk deploy --all --concurrency 5 --require-approval never --outputs-file $(CURDIR)/outputs.json
+	cd $(CDK_PATH) && . ${NVM_DIR}/nvm.sh && nvm use && npx cdk deploy --all -c domainName=${HOSTED_ZONE_NAME} -c platformTeamUserRoleArn=${PLATFORM_TEAM_USER_ROLE_ARN} --concurrency 5 --require-approval never --outputs-file $(CURDIR)/outputs.json
 
 destroy:
 	cd $(CDK_PATH) && npx cdk destroy --all 
@@ -65,7 +65,7 @@ else
 endif
 
 synth:
-	cd $(CDK_PATH) && npx cdk synth
+	cd $(CDK_PATH) && npx cdk synth -c domainName=${HOSTED_ZONE_NAME} -c platformTeamUserRoleArn=${PLATFORM_TEAM_USER_ROLE_ARN}
 
 update-values:
 	cd $(CDK_PATH) && npm run update-values

@@ -13,7 +13,6 @@ declare var process : {
     env: {
         CDK_DEFAULT_ACCOUNT: string;
         CDK_DEFAULT_REGION: string;
-        HOSTED_ZONE_NAME: string;
     };
 }
 
@@ -23,7 +22,10 @@ const env = {
 }
 
 // Declare Teams for EKS blueprint
-const platformTeam = new team.TeamPlatform();
+const platformTeam = new team.TeamPlatform({ 
+    userRoleArn: app.node.tryGetContext('platformTeamUserRoleArn'),
+});
+
 const teams: Array<blueprints.Team> = [ platformTeam ];
 
 // Policy Resource for AwsForFluentBitAddOn
@@ -37,7 +39,7 @@ const cloudWatchLogPolicy = new iam.PolicyStatement({
 })
 
 //Domain Name for ExternalDnsAddOn
-const { HOSTED_ZONE_NAME: domainName } = process.env;
+const domainName = app.node.tryGetContext('domainName');
 const argoHost = `argo.${domainName}`;
 
 const prereqsStack = new infrastructure.PrerequisitesStack(app, 'PrerequisitesStack', { env, domainName });
