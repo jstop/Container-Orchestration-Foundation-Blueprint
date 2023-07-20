@@ -4,8 +4,8 @@
 
 ## Prerequisites
 1. An AWS Account
-1. A hosted zone
-1. A Platform team user role
+1. A Route53 hosted zone registered in the AWS account. See [Registering and managing domains using Amazon Route 53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/registrar.html) in the AWS Developer Guide for details.
+1. A [Platform team user role](https://aws-quickstart.github.io/cdk-eks-blueprints/teams/teams/#platformteam).
 
 
 Example .env file
@@ -36,4 +36,9 @@ username: admin
 password: `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d`
 
 ### Cleanup 
+With argo-proxy running:
+```
+make argo-destroy
+```
+
 `make destroy`
