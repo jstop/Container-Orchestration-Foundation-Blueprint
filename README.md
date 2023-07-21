@@ -6,18 +6,32 @@
 1. An AWS Account
 1. A Route53 hosted zone registered in the AWS account. See [Registering and managing domains using Amazon Route 53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/registrar.html) in the AWS Developer Guide for details.
 1. A [Platform team user role](https://aws-quickstart.github.io/cdk-eks-blueprints/teams/teams/#platformteam).
+1. A GitHub repository with an SSH Key Pair
 
 
 Example .env file
 
 ```bash
-echo "HOSTED_ZONE_NAME=verticalrelevancelabs.com
-PLATFORM_TEAM_USER_ROLE_ARN=arn:aws:iam::899456967600:role/AWSReservedSSO_AWSAdministratorAccess_30f517a3940f0385" \
+echo "HOSTED_ZONE_NAME=<HOSTED_ZONE_NAME>
+PLATFORM_TEAM_USER_ROLE_ARN=<PLATFORM_TEAM_USER_ROLE_ARN>" \
 > .env
+```
+
+To override the the default [SSH private key path](https://argo-cd.readthedocs.io/en/stable/user-guide/private-repositories/#ssh-private-key-credential), the `SSH_PRIVATE_KEY_PATH` environment variable can be set. The default value is `~/.ssh/id_ed25519`.
+
+```bash
+echo "SSH_PRIVATE_KEY_PATH=~/.ssh/id_rsa" >> .env
 ```
 
 ## Install and run CDK
 `make`
+
+## Update the values files for argocd
+```bash
+make update-values
+git commit -m "Update values files"
+git push
+```
 
 ### Setup Argo Proxy
 `make argo-proxy`

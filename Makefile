@@ -35,7 +35,7 @@ deploy:
 	cd $(CDK_PATH) && . ${NVM_DIR}/nvm.sh && nvm use && npx cdk deploy --all $(CDK_CONTEXT_PARAMS) --concurrency 5 --require-approval never --outputs-file $(CURDIR)/outputs.json
 
 destroy:
-	cd $(CDK_PATH) && npx cdk destroy --all 
+	cd $(CDK_PATH) && npx cdk destroy --all $(CDK_CONTEXT_PARAMS)
 
 dashboard:
 	./scripts/k8_dashboard.sh
