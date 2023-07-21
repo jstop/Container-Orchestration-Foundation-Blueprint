@@ -1,29 +1,29 @@
 replicaCount: 3
 image:
-  repository: 899456967600.dkr.ecr.us-east-2.amazonaws.com/spring-backend
+  repository: ''
   tag: dev-amd64
   pullPolicy: Always
 env:
   - name: SPRING_DATASOURCE_URL
-    value: jdbc-secretsmanager:mysql://rdsstack-databaseb269d8bb-3yoouwrv74qe.cluster-cetdtvws2z9p.us-east-2.rds.amazonaws.com:3306/polling?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+    value: jdbc-secretsmanager:mysql://cluster-endpoint:3306/polling?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
   - name: SPRING_DATASOURCE_USERNAME
-    value: RDSStackDatabaseSecretA3C9F-hBQdAMJ56EJj
+    value: ''
   - name: SPRING_DATASOURCE_DRIVER-CLASS-NAME
     value: com.amazonaws.secretsmanager.sql.AWSSecretsManagerMySQLDriver
   - name: APP_CORS_ALLOWEDORIGINS
-    value: https://polling.verticalrelevancelabs.com
+    value: ''
 service:
   type: ClusterIP
   port: 8080
 ingress:
   enabled: false
   annotations:
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-2:899456967600:certificate/5abac220-df58-458e-9e38-55c538d65b90
+    alb.ingress.kubernetes.io/certificate-arn: ''
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    external-dns.alpha.kubernetes.io/hostname: polling-api.verticalrelevancelabs.com
+    external-dns.alpha.kubernetes.io/hostname: ''
   path: /
-  host: polling-api.verticalrelevancelabs.com
+  host: ''
   hosts:
     - chart-example.local
   tls: []

@@ -1,22 +1,22 @@
 replicaCount: 1
 image:
-  repository: 899456967600.dkr.ecr.us-east-2.amazonaws.com/spring-frontend
+  repository: ''
   tag: dev-amd64
   pullPolicy: Always
 env:
-  react_app_api_base_url: https://polling-api.verticalrelevancelabs.com/api
+  react_app_api_base_url: ''
 service:
   type: ClusterIP
   port: 80
 ingress:
   enabled: false
   annotations:
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-2:899456967600:certificate/5abac220-df58-458e-9e38-55c538d65b90
+    alb.ingress.kubernetes.io/certificate-arn: ''
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    external-dns.alpha.kubernetes.io/hostname: polling.verticalrelevancelabs.com
+    external-dns.alpha.kubernetes.io/hostname: ''
   path: /
-  host: polling.verticalrelevancelabs.com
+  host: ''
   hosts:
     - chart-example.local
   tls: []

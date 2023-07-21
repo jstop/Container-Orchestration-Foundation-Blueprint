@@ -1,5 +1,5 @@
 # Container-Orchestration-Foundation-Blueprint
-![image](https://github.com/VerticalRelevance/Container-Orchestration-Foundation-Blueprint/blob/main/Container_Orchestration.drawio.png)
+![image](/Container_Orchestration.drawio.png)
 
 
 ## Prerequisites
