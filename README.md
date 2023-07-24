@@ -1,13 +1,17 @@
 # Container-Orchestration-Foundation-Blueprint
+The Container Orchestration Foundation Blueprint is an [AWS CDK](https://aws.amazon.com/cdk/) application that is designed to set up an EKS cluster, including all of the underlying resources, along with AWS CodePipeline and CodeBuild to create the container images. To deploy the container images to the EKS cluster, we utilize [ArgoCD](https://argo-cd.readthedocs.io/en/stable/). A React frontend and Java Spring backend that utilizes RDS MySQL are provided along with helm charts
+
 ![image](/Container_Orchestration.drawio.png)
 
 
 ## Prerequisites
+1. A GitHub repository with an SSH Key Pair
 1. An AWS Account
 1. A Route53 hosted zone registered in the AWS account. See [Registering and managing domains using Amazon Route 53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/registrar.html) in the AWS Developer Guide for details.
-1. A [Platform team user role](https://aws-quickstart.github.io/cdk-eks-blueprints/teams/teams/#platformteam).
-1. A GitHub repository with an SSH Key Pair
+1. A [Platform team user role](https://aws-quickstart.github.io/cdk-eks-blueprints/teams/teams/#platformteam). This is a role that will your team will be allowed to assume in order to administer the cluster.
 
+## Configuration
+Configuration is done through environment variables. The `.env` file in the root of this repository will be included when running make commands. Crucially, the `HOSTED_ZONE_NAME` and `PLATFORM_TEAM_USER_ROLE_ARN` variables must be specified. Optionally, `SSH_PRIVATE_KEY_PATH` can be specified.
 
 Example .env file
 
