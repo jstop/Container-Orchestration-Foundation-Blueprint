@@ -1,5 +1,5 @@
 # Container-Orchestration-Foundation-Blueprint
-The Container Orchestration Foundation Blueprint is an [AWS CDK](https://aws.amazon.com/cdk/) application that is designed to set up an EKS cluster, including all of the underlying resources, along with AWS CodePipeline and CodeBuild to create the container images. To deploy the container images to the EKS cluster, we utilize [ArgoCD](https://argo-cd.readthedocs.io/en/stable/). A React frontend and Java Spring backend that utilizes RDS MySQL are provided along with helm charts
+The Container Orchestration Foundation Blueprint is an [AWS CDK](https://aws.amazon.com/cdk/) application that is designed to set up an EKS cluster, including all of the underlying resources, along with AWS CodePipeline and CodeBuild to create the container images. The cluster is created with the CDK's [EKS Blueprint](https://aws-quickstart.github.io/cdk-eks-blueprints/getting-started/), which follows the AWS best practices for managing EKS. In order to deploy the container images to the EKS cluster, we utilize [ArgoCD](https://argo-cd.readthedocs.io/en/stable/). A React frontend and Java Spring backend that utilizes RDS MySQL are provided, along with [helm charts](https://helm.sh) for each. Together, the frontend, backend, and database comprise a three-tier archicture polling application. The app is meant to be hosted at `https://polling.yourdomain.com`, where `yourdomain.com` is the hosted zone name of your hosted zone.
 
 ![image](/Container_Orchestration.drawio.png)
 
@@ -7,8 +7,22 @@ The Container Orchestration Foundation Blueprint is an [AWS CDK](https://aws.ama
 ## Prerequisites
 1. A GitHub repository with an SSH Key Pair
 1. An AWS Account
-1. A Route53 hosted zone registered in the AWS account. See [Registering and managing domains using Amazon Route 53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/registrar.html) in the AWS Developer Guide for details.
+1. A Route53 hosted zone registered in the AWS account. See [Registering and managing domains using Amazon Route 53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/registrar.html) in the AWS Developer Guide for details. The following records must be available: `polling`, `polling-api`, `argo`.
 1. A [Platform team user role](https://aws-quickstart.github.io/cdk-eks-blueprints/teams/teams/#platformteam). This is a role that will your team will be allowed to assume in order to administer the cluster.
+
+## Create a GitHub repository and SSH Key Pair
+* [Create a repo](https://docs.github.com/en/get-started/quickstart/create-a-repo) (e.g. `github.com/mycompany/Container-Orchestration-Foundation-Blueprint`) (take note of the SSH clone URL)
+* [Set up an SSH Key pair with GitHub](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent?platform=mac)
+
+## Clone the repository and set up a new origin and branch
+```bash
+export GITHUB_OWNER=mycompany # update this with your org or user
+git clone git@github.com:VerticalRelevance/Container-Orchestration-Foundation-Blueprint.git
+cd Container-Orchestration-Foundation-Blueprint/
+git remote remove origin
+git remote add origin git@github.com:${GITHUB_OWNER}/Container-Orchestration-Foundation-Blueprint.git
+git push -u origin main
+```
 
 ## Configuration
 Configuration is done through environment variables. The `.env` file in the root of this repository will be included when running make commands. Crucially, the `HOSTED_ZONE_NAME` and `PLATFORM_TEAM_USER_ROLE_ARN` variables must be specified. Optionally, `SSH_PRIVATE_KEY_PATH` can be specified.
@@ -30,9 +44,18 @@ echo "SSH_PRIVATE_KEY_PATH=~/.ssh/id_rsa" >> .env
 ## Install and run CDK
 `make`
 
+This step:
+* Installs the homebrew dependencies, 
+* Runs the CDK `deploy` and generates the output JSON file (which is needed for the next step)
+* Provisions the Karpenter template
+* Pushes the application code the the CodeCcommit repos, which triggers the CodePipelines (so that the images are built and pushed into ECR)
+
 ## Update the values files for argocd
+This step utilizes the outputs of the CDK and configures the helm chart values that are needed for deployment. The values files are automatically parsed, modified, then rendered back out as a string in-place.
+
 ```bash
 make update-values
+git add charts/
 git commit -m "Update values files"
 git push
 ```
@@ -44,19 +67,26 @@ This will not complete and should be left open. Use another terminal while this 
 ### Install Dashboard and Apps
 With argo-proxy running:
 ```
-make dashboard
+make dashboard # optional
 make spring-apps
 ```
 
+The `make spring-apps` will install the polling-app, which is comprised of the two helm charts: spring-frontend and spring-backend. Each chart is configured with an ingress (which in turn creates an Application Load Balancer) and annotations to utilize the wildcard ACM certificate created from the previous CDK step, as well as an external-dns annotation for automatic Route53 record configuration.
+
 ### argocd UI
-localhost:8080
+https://localhost:8080
 username: admin
 password: `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d`
 
 ### Cleanup 
+In order to clean up we must first delete the argo applications and then tear down the cluster. Therefore, we should run `make argo-destroy` before `make destroy`.
+
 With argo-proxy running:
-```
+
+```bash
 make argo-destroy
 ```
+
+To destroy the CDK Stacks
 
 `make destroy`
