@@ -47,6 +47,10 @@ echo "SSH_PRIVATE_KEY_PATH=~/.ssh/id_rsa" >> .env
 This step:
 * Installs the homebrew dependencies, 
 * Runs the CDK `deploy` and generates the output JSON file (which is needed for the next step)
+    * Provisions the Wildcard ACM certicate and CodeCommit repo
+    * Provisions the VPC, EKS Cluster, EKS Addons
+    * Provisions the RDS Database Cluster
+    * Provisions the Pipelines (spring-frontend and spring-backend) and ECR Repositories
 * Provisions the Karpenter template (see https://karpenter.sh/docs/getting-started/getting-started-with-karpenter/#5-create-provisioner)
 * Pushes the application code the the CodeCcommit repos, which triggers the CodePipelines (so that the images are built and pushed into ECR)
 
