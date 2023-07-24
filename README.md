@@ -74,9 +74,9 @@ make spring-apps
 The `make spring-apps` will install the polling-app, which is comprised of the two helm charts: spring-frontend and spring-backend. Each chart is configured with an ingress (which in turn creates an Application Load Balancer) and annotations to utilize the wildcard ACM certificate created from the previous CDK step, as well as an external-dns annotation for automatic Route53 record configuration.
 
 ### argocd UI
-https://localhost:8080
-username: admin
-password: `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d`
+* https://localhost:8080
+* username: admin
+* password: `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d`
 
 ### Cleanup 
 In order to clean up we must first delete the argo applications and then tear down the cluster. Therefore, we should run `make argo-destroy` before `make destroy`.
