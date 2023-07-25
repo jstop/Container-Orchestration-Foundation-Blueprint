@@ -4,7 +4,7 @@ metadata:
   name: spring-backend
   namespace: argocd
   annotations:
-    argocd-image-updater.argoproj.io/image-list: api={{ .Values.backend-repo-url }}
+    argocd-image-updater.argoproj.io/image-list: api={{ .Values.backendRepoUrl }}
     argocd-image-updater.argoproj.io/api.update-strategy: digest
   finalizers:
   - resources-finalizer.argocd.argoproj.io

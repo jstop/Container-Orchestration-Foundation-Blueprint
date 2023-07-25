@@ -5,5 +5,5 @@ spec:
     repoURL: ''
     targetRevision: ''
     path: ./charts
-backend-repo-url: ''
-frontend-repo-url: ''
+backendRepoUrl: ''
+frontendRepoUrl: ''

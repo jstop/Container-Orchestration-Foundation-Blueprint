@@ -12,8 +12,8 @@ const obj = parse(yaml);
 
 obj.spec.source.repoURL = GIT_REMOTE_URL;
 obj.spec.source.targetRevision = GIT_CURRENT_BRANCH;
-obj['backend-repo-url'] = outputs.SpringBackendPipelineStack.ECRRepoURI;
-obj['frontend-repo-url'] = outputs.SpringFrontendPipelineStack.ECRRepoURI;
+obj.backendRepoUrl = outputs.SpringBackendPipelineStack.ECRRepoURI;
+obj.frontendRepoUrl = outputs.SpringFrontendPipelineStack.ECRRepoURI;
 
 const yaml_string = stringify(obj);
 console.log(yaml_string);
