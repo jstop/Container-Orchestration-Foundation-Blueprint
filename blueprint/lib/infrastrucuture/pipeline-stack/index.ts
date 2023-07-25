@@ -19,7 +19,9 @@ export class PipelineStack extends cdk.Stack {
 
         //  create ECR Repo
         const ecrRepo = new ecr.Repository(this, 'EcrRepo',{
-            repositoryName: pipelineName
+            repositoryName: pipelineName,
+            removalPolicy: cdk.RemovalPolicy.DESTROY,
+            autoDeleteImages: true,
         });
 
         //  create CodeCommit
