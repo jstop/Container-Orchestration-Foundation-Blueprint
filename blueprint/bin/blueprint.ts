@@ -89,7 +89,7 @@ const addOns: Array<blueprints.ClusterAddOn> = [
         }
     }),
     new blueprints.addons.AwsForFluentBitAddOn({ 
-        version: '0.1.22',
+        version: '0.1.27',
         iamPolicies: [cloudWatchLogPolicy],
         values: {
             cloudWatch: {
