@@ -35,6 +35,8 @@ deploy:
 	cd $(CDK_PATH) && . ${NVM_DIR}/nvm.sh && nvm use && npx cdk deploy --all $(CDK_CONTEXT_PARAMS) --concurrency 5 --require-approval never --outputs-file $(CURDIR)/outputs.json
 
 destroy:
+	./scripts/empty_ecr_repo.sh spring-backend
+	./scripts/empty_ecr_repo.sh spring-frontend
 	cd $(CDK_PATH) && npx cdk destroy --all $(CDK_CONTEXT_PARAMS)
 
 dashboard:
@@ -50,6 +52,7 @@ spring-apps-destroy:
 	./scripts/springapp-destroy.sh
 
 argo-destroy: dashboard-destroy spring-apps-destroy
+	argocd app delete bootstrap-apps --yes
 
 bootstrap:
 	@for LIB in $(HOMEBREW_LIBS) ; do \
