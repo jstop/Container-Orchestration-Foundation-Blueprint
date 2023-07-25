@@ -13,9 +13,9 @@ fi
 
 digests_string=""
 for image_digest in $image_digests; do
-    digests_string+="imageDigest=$image_digest,"
+    digests_string+="imageDigest=$image_digest "
 done
-digests_string=$(echo $digests_string | sed 's/,$//')
+digests_string=$(echo $digests_string | sed 's/ $//')
 
 echo "Deleting images from ECR repository... \n$digests_string".
 
