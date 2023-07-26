@@ -14,7 +14,7 @@ export GIT_REMOTE_URL := $(shell git remote get-url origin)
 export CDK_CONTEXT_PARAMS := -c domainName=$(HOSTED_ZONE_NAME) -c platformTeamUserRoleArn=$(PLATFORM_TEAM_USER_ROLE_ARN)
 
 # Dependecies
-HOMEBREW_LIBS :=  nvm typescript argocd git-remote-codecommit eksctl kubernetes-cli
+HOMEBREW_LIBS := nvm argocd git-remote-codecommit eksctl kubernetes-cli awscli
 
 all: bootstrap build
 	

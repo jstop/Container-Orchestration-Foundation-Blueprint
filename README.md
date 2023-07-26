@@ -1,10 +1,11 @@
 # Container-Orchestration-Foundation-Blueprint
-The Container Orchestration Foundation Blueprint is an [AWS CDK](https://aws.amazon.com/cdk/) application that is designed to set up an EKS cluster, including all of the underlying resources, along with AWS CodePipeline and CodeBuild to create the container images. The cluster is created with the CDK's [EKS Blueprint](https://aws-quickstart.github.io/cdk-eks-blueprints/getting-started/), which follows the AWS best practices for managing EKS. In order to deploy the container images to the EKS cluster, we utilize [ArgoCD](https://argo-cd.readthedocs.io/en/stable/). A React frontend and Java Spring backend that utilizes RDS MySQL are provided, along with [helm charts](https://helm.sh) for each. Together, the frontend, backend, and database comprise a three-tier archicture polling application. The app is meant to be hosted at `https://polling.yourdomain.com`, where `yourdomain.com` is the hosted zone name of your hosted zone.
+The Container Orchestration Foundation Blueprint is an [AWS CDK](https://aws.amazon.com/cdk/) application that is designed to set up an EKS cluster, including all of the underlying resources, along with AWS CodePipeline, CodeBuild, and ECR to create and host the container images. The cluster is created with the CDK's [EKS Blueprint](https://aws-quickstart.github.io/cdk-eks-blueprints/getting-started/), which follows the AWS best practices for managing EKS. In order to deploy the container images to the EKS cluster, we utilize [ArgoCD](https://argo-cd.readthedocs.io/en/stable/). A React frontend and Java Spring backend that utilizes RDS MySQL are provided, along with [helm charts](https://helm.sh) for each. Together, the frontend, backend, and database comprise a three-tier archicture polling application. The app is meant to be hosted at `https://polling.yourdomain.com`, where `yourdomain.com` is the hosted zone name of your hosted zone.
 
 ![image](/Container_Orchestration.drawio.png)
 
 
 ## Prerequisites
+1. [Homebrew](https://brew.sh) installed on your local machine (tested with MacOS)
 1. A GitHub repository with an SSH Key Pair
 1. An AWS Account
 1. A Route53 hosted zone registered in the AWS account. See [Registering and managing domains using Amazon Route 53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/registrar.html) in the AWS Developer Guide for details. The following records must be available: `polling`, `polling-api`, `argo`.
@@ -45,7 +46,7 @@ echo "SSH_PRIVATE_KEY_PATH=~/.ssh/id_rsa" >> .env
 `make`
 
 This step:
-* Installs the homebrew dependencies, 
+* Installs the homebrew dependencies, if needed.
 * Runs the CDK `deploy` and generates the output JSON file (which is needed for the next step)
     * Provisions the Wildcard ACM certicate and CodeCommit repo
     * Provisions the VPC, EKS Cluster, EKS Addons
@@ -91,6 +92,11 @@ With argo-proxy running:
 make argo-destroy
 ```
 
-To destroy the CDK Stacks
+To destroy the CDK Stacks:
 
 `make destroy`
+
+This will
+* Delete the argocd namespace from the cluster (if it exists)
+* Remove any remaining images from the ECR repositories
+* Run cdk destroy to delete the CloudFormation Stacks
