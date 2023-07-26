@@ -35,7 +35,7 @@ deploy:
 	cd $(CDK_PATH) && . ${NVM_DIR}/nvm.sh && nvm use && npx cdk deploy --all $(CDK_CONTEXT_PARAMS) --concurrency 5 --require-approval never --outputs-file $(CURDIR)/outputs.json
 
 destroy:
-	aws eks update-kubeconfig --name blueprint --region $(AWS_REGION)
+	aws eks update-kubeconfig --name blueprint --region $(AWS_REGION) || true
 	kubectl delete ns argocd || true
 	./scripts/empty_ecr_repo.sh spring-backend
 	./scripts/empty_ecr_repo.sh spring-frontend
