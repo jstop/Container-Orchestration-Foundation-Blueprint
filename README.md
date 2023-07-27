@@ -90,6 +90,8 @@ make dashboard # optional
 make spring-apps
 ```
 
+The `make dashboard` command will install the kubernetes dashboard application from [this repository](https://github.com/jstein-vr/k8-dashboard) that can be accessed by running `kubectl proxy` (see [accessing the Dashboard UI documentation](https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/#accessing-the-dashboard-ui)) and then visiting http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/ in the browser.
+
 The `make spring-apps` will install the polling-app, which is comprised of the two helm charts: spring-frontend and spring-backend. Each chart is configured with an ingress (which in turn creates an Application Load Balancer) and annotations to utilize the wildcard ACM certificate created from the previous CDK step, as well as an external-dns annotation for automatic Route53 record configuration.
 
 ### argocd UI
@@ -111,6 +113,8 @@ To destroy the CDK Stacks:
 `make destroy`
 
 This will
-* Delete the argocd namespace from the cluster (if it exists)
+* Delete the argocd namespace from the cluster
 * Remove any remaining images from the ECR repositories
 * Run cdk destroy to delete the CloudFormation Stacks
+
+The `make destroy` command can be run multiple times, in case the CloudFormation stacks fail to delete. Since there are known issues with [CloudFormation stacks getting stuck with ArgoCD](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/argo-cd/#known-issues), we delete the argocd namespace to remove ArgoCD from the cluster before destroying the cluster.
