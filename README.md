@@ -1,6 +1,20 @@
 # Container-Orchestration-Foundation-Blueprint
 The Container Orchestration Foundation Blueprint is an [AWS CDK](https://aws.amazon.com/cdk/) application that is designed to set up an EKS cluster, including all of the underlying resources, along with AWS CodePipeline, CodeBuild, and ECR to create and host the container images. The cluster is created with the CDK's [EKS Blueprint](https://aws-quickstart.github.io/cdk-eks-blueprints/getting-started/), which follows the AWS best practices for managing EKS. In order to deploy the container images to the EKS cluster, we utilize [ArgoCD](https://argo-cd.readthedocs.io/en/stable/). A React frontend and Java Spring backend that utilizes RDS MySQL are provided, along with [helm charts](https://helm.sh) for each. Together, the frontend, backend, and database comprise a three-tier archicture polling application. The app is meant to be hosted at `https://polling.yourdomain.com`, where `yourdomain.com` is the hosted zone name of your hosted zone.
 
+The following EKS addons are installed:
+
+* [Kube Proxy](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/kube-proxy/) - Enables network communication to pods
+* [Core DNS](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/coredns/) - Provides DNS resolution for all pods in the cluster
+* [VPC CNI](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/vpc-cni/) - Adds support for the VPC CNI plugin, which allows pods to have to have the same IP address inside the pod as they do on the VPC network
+* [Secrets Store](https://aws-quickstart.github.io/cdk-eks-blueprints/secrets-store/) - Used for mounting secrets in the pods
+* [ArgoCD](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/argo-cd/) - A declarative GitOps CI/CD tool for Kubernetes. This addon will be used to deploy the helm charts to the cluster
+* [Metrics Server](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/metrics-server/) - Needed for Horizontal Pod Autoscaler
+* [AWS Load Balancer Controller](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/aws-load-balancer-controller/) - Allows provisioning of AWS Application Load Balancers through ingress resources
+* [External DNS](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/external-dns/) - Creates Route53 records by using annotations on the ingress resources. This will configure the domains to automatically point at the load balancers
+* [Karpenter](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/karpenter/) - Provisions and removes nodes automatically when pods are created or deleted
+* [AWS for Fluent Bit](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/aws-for-fluent-bit/) - Configures logging with CloudWatch Logs
+
+
 ![image](/Container_Orchestration.drawio.png)
 
 
