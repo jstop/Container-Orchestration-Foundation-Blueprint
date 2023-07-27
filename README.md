@@ -20,6 +20,12 @@ The following EKS addons are installed:
 
 ## Prerequisites
 1. [Homebrew](https://brew.sh) installed on your local machine (tested with MacOS)
+    * Note that if this is your first time installing nvm, please update your [bash or zsh profile](https://formulae.brew.sh/formula/nvm#default):
+    ```bash
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$HOMEBREW_PREFIX/opt/nvm/nvm.sh" ] && \. "$HOMEBREW_PREFIX/opt/nvm/nvm.sh" # This loads nvm
+    [ -s "$HOMEBREW_PREFIX/opt/nvm/etc/bash_completion.d/nvm" ] && \. "$HOMEBREW_PREFIX/opt/nvm/etc/bash_completion.d/nvm" # This loads nvm bash_completion
+    ```
 1. A GitHub repository with an SSH Key Pair
 1. An AWS Account
 1. A Route53 hosted zone registered in the AWS account. See [Registering and managing domains using Amazon Route 53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/registrar.html) in the AWS Developer Guide for details. The following records must be available: `polling`, `polling-api`, `argo`.
