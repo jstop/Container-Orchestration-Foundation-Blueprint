@@ -19,7 +19,8 @@ The following EKS addons are installed:
 
 
 ## Prerequisites
-1. [Homebrew](https://brew.sh) installed on your local machine (tested with MacOS)
+1. Git version 2.28.0 or later installed locally
+1. [Homebrew](https://brew.sh) installed on your local machine
     * Note that if this is your first time installing nvm, please update your [bash or zsh profile](https://formulae.brew.sh/formula/nvm#default):
     ```bash
     export NVM_DIR="$HOME/.nvm"
@@ -44,6 +45,11 @@ git remote remove origin
 git remote add origin git@github.com:${GITHUB_OWNER}/Container-Orchestration-Foundation-Blueprint.git
 git push -u origin main
 ```
+
+## AWS Credentials
+AWS credentails must be configured to work with the target account and region when deploying the CDK. The project will use the AWS SDK under the hood to gather credentials. Therefore, you can `export AWS_PROFILE=<profile_name>` if you have an AWS profile configured with the CLI. You can also set the region by running `aws configure set region <region-name>`
+
+If you experience errors while running the make commands such as "unresolved tokens", please be sure to check your `~/.aws/credentials` and `~/.aws/config` files for potential configuration issues.
 
 ## Configuration
 Configuration is done through environment variables. The `.env` file in the root of this repository will be included when running make commands. Crucially, the `HOSTED_ZONE_NAME` and `PLATFORM_TEAM_USER_ROLE_ARN` variables must be specified. Optionally, `SSH_PRIVATE_KEY_PATH` can be specified.
@@ -120,6 +126,16 @@ To destroy the CDK Stacks:
 
 This will
 * Delete the argocd namespace from the cluster
+    * If the namespace is stuck in terminating state, there may be resources failing to delete from the namespace. In which case the following commands will be helpful:
+
+        ```bash
+        # List the hanging resources
+        kubectl api-resources --verbs=list --namespaced -o name | xargs -n 1 kubectl get --show-kind --ignore-not-found -n argocd
+
+        # List and delete the application resources in the argocd namespace
+        kubectl -n argocd get application -o=jsonpath='{.items[*].metadata.name}' | xargs -n 1 -I {} kubectl patch -n argocd application {} --type=json -p='[{"op": "remove", "path": "/metadata/finalizers"}]'
+        ```
+
 * Remove any remaining images from the ECR repositories
 * Run cdk destroy to delete the CloudFormation Stacks
 
