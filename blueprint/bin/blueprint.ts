@@ -31,6 +31,7 @@ const teams: Array<blueprints.Team> = [ platformTeam ];
 // Policy Resource for AwsForFluentBitAddOn
 const cloudWatchLogPolicy = new iam.PolicyStatement({
     actions: [
+        'logs:DescribeLogStreams',
         'logs:CreateLogGroup',
         'logs:CreateLogStream',
         'logs:PutLogEvents',
@@ -109,6 +110,7 @@ const addOns: Array<blueprints.ClusterAddOn> = [
             }
         }
     }),
+    new blueprints.addons.ContainerInsightsAddOn(),
 ];
 
 // create the blueprint EKS stack
