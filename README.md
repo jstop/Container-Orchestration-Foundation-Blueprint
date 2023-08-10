@@ -13,6 +13,7 @@ The following EKS addons are installed:
 * [External DNS](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/external-dns/) - Creates Route53 records by using annotations on the ingress resources. This will configure the domains to automatically point at the load balancers
 * [Karpenter](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/karpenter/) - Provisions and removes nodes automatically when pods are created or deleted
 * [AWS for Fluent Bit](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/aws-for-fluent-bit/) - Configures logging with CloudWatch Logs
+* [Container Insights](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/container-insights/) - Installs the AWS Distro for Open Telemetry collector and populates CloudWatch Container Insights with metrics. The metrics and dashboards [can be viewed through the CloudWatch console](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-view-metrics.html).
 
 
 ![image](/Container_Orchestration.drawio.png)
