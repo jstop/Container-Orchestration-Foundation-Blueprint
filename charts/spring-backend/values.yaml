@@ -34,7 +34,6 @@ resources:
 nodeSelector:
   intent: apps
 tolerations: []
-affinity: {}
 autoscaling:
   enabled: false
   minReplicas: 2

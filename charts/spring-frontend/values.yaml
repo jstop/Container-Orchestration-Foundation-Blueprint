@@ -27,4 +27,3 @@ resources:
 nodeSelector:
   intent: apps
 tolerations: []
-affinity: {}
