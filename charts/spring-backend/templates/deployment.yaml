@@ -45,8 +45,6 @@ spec:
       nodeSelector:
 {{ toYaml . | indent 8 }}
     {{- end }}
-{{ toYaml . | indent 8 }}
-    {{- end }}
     {{- with .Values.tolerations }}
       tolerations:
 {{ toYaml . | indent 8 }}
