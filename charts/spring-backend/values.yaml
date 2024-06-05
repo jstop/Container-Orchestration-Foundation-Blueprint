@@ -31,8 +31,6 @@ resources:
   requests:
     cpu: 1000m
     memory: 512Mi
-nodeSelector:
-  intent: apps
 tolerations: []
 autoscaling:
   enabled: false
