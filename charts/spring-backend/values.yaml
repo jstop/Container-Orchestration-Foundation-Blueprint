@@ -1,29 +1,29 @@
 replicaCount: 3
 image:
-  repository: ''
+  repository: 523888557587.dkr.ecr.us-east-1.amazonaws.com/spring-backend
   tag: dev-amd64
   pullPolicy: Always
 env:
   - name: SPRING_DATASOURCE_URL
-    value: jdbc-secretsmanager:mysql://cluster-endpoint:3306/polling?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+    value: jdbc-secretsmanager:mysql://rdsstack-databaseb269d8bb-dvh0hndhnz5n.cluster-cj0aswe2ucyx.us-east-1.rds.amazonaws.com:3306/polling?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
   - name: SPRING_DATASOURCE_USERNAME
-    value: ''
+    value: RDSStackDatabaseSecretA3C9F-Lf52qyEe49Lt
   - name: SPRING_DATASOURCE_DRIVER-CLASS-NAME
     value: com.amazonaws.secretsmanager.sql.AWSSecretsManagerMySQLDriver
   - name: APP_CORS_ALLOWEDORIGINS
-    value: ''
+    value: https://polling.routinebuilders.com
 service:
   type: ClusterIP
   port: 8080
 ingress:
   enabled: false
   annotations:
-    alb.ingress.kubernetes.io/certificate-arn: ''
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:523888557587:certificate/c00127bf-4fae-4280-8090-a429f6143f23
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    external-dns.alpha.kubernetes.io/hostname: ''
+    external-dns.alpha.kubernetes.io/hostname: polling-api.routinebuilders.com
   path: /
-  host: ''
+  host: polling-api.routinebuilders.com
   hosts:
     - chart-example.local
   tls: []

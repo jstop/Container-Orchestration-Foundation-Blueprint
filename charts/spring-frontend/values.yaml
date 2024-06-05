@@ -1,22 +1,22 @@
 replicaCount: 1
 image:
-  repository: ''
+  repository: 523888557587.dkr.ecr.us-east-1.amazonaws.com/spring-frontend
   tag: dev-amd64
   pullPolicy: Always
 env:
-  react_app_api_base_url: ''
+  react_app_api_base_url: https://polling-api.routinebuilders.com/api
 service:
   type: ClusterIP
   port: 80
 ingress:
   enabled: false
   annotations:
-    alb.ingress.kubernetes.io/certificate-arn: ''
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:523888557587:certificate/c00127bf-4fae-4280-8090-a429f6143f23
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    external-dns.alpha.kubernetes.io/hostname: ''
+    external-dns.alpha.kubernetes.io/hostname: polling.routinebuilders.com
   path: /
-  host: ''
+  host: polling.routinebuilders.com
   hosts:
     - chart-example.local
   tls: []
