@@ -7,6 +7,7 @@ import * as team from '../lib/teams';
 import * as infrastructure from '../lib/infrastrucuture';
 
 const app = new cdk.App();
+const version = 'auto';
 
 // use environment variables to pass in the parameters
 declare var process : {
@@ -82,6 +83,27 @@ const addOns: Array<blueprints.ClusterAddOn> = [
     new blueprints.addons.CoreDnsAddOn(),
     new blueprints.addons.VpcCniAddOn(),
     new blueprints.addons.KarpenterAddOn({
+        version: 'v0.33.1',
+        nodePoolSpec: {
+          labels: {
+              type: "karpenter-test"
+          },
+          annotations: {
+              "eks-blueprints/owner": "young"
+          },
+          taints: [{
+              key: "workload",
+              value: "test",
+              effect: "NoSchedule",
+          }],
+          requirements: [
+              { key: 'node.kubernetes.io/instance-type', operator: 'In', values: ['t2.medium'] },
+              { key: 'topology.kubernetes.io/zone', operator: 'In', values: ['us-east-1a','us-east-1b', 'us-east-1c']},
+              { key: 'kubernetes.io/arch', operator: 'In', values: ['amd64','arm64']},
+              { key: 'karpenter.sh/capacity-type', operator: 'In', values: ['spot']},
+          ]
+        }
+            /*
         subnetTags: {
             "aws:cloudformation:stack-name": "blueprint",
             "aws-cdk:subnet-type": "Private"
@@ -90,6 +112,8 @@ const addOns: Array<blueprints.ClusterAddOn> = [
         securityGroupTags: {
             "kubernetes.io/cluster/blueprint": "owned",
         }
+    */
+          
     }),
     new blueprints.addons.AwsForFluentBitAddOn({ 
         version: '0.1.27',
@@ -117,6 +141,7 @@ const addOns: Array<blueprints.ClusterAddOn> = [
 const stack = blueprints.EksBlueprint.builder()
     .account(env.account)
     .region(env.region)
+    .version(version)
     .resourceProvider("HostedZone", new blueprints.LookupHostedZoneProvider(domainName))
     .addOns(...addOns)
     .teams(...teams)
