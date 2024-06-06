@@ -11,7 +11,7 @@ service:
 ingress:
   enabled: false
   annotations:
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:523888557587:certificate/c00127bf-4fae-4280-8090-a429f6143f23
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:523888557587:certificate/5f06a314-8f99-4391-8cfd-7c5e7dabe233
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
     external-dns.alpha.kubernetes.io/hostname: polling.routinebuilders.com
